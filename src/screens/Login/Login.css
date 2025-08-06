@@ -1,0 +1,64 @@
+.Login-Screen {
+    position: fixed;
+    background-image: url('../../assets/images/LoginScreen.svg');
+    width: 100%;
+    height: 112%;
+    top: 0px;
+    bottom: 0px;
+    background-repeat: no-repeat;
+    
+}
+
+.Login-Screen h1 {
+    position: relative;
+    width: 222px;
+    height: 60px;
+    left: 72%;
+    top: 25%;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 55px;
+    line-height: 67px;
+    color: #007afb;
+
+}
+
+.Login-Screen h2 {
+    position: relative;
+    width: 400px;
+    height: 60px;
+    left: 72%;
+    top: 25%;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 27px;
+    color: #007afb;
+
+}
+
+
+.Login-Screen .labels {
+    width: 18vw;
+    margin-left: 72%;
+    margin-top: 14%;
+    border-color: black;
+}
+
+.button .Login{
+    width: 18vw;
+    margin-left: 72%;
+    margin-top: 0%;
+    background-color: #007afb;
+    
+}
+
+
+
+
+
+
+
+

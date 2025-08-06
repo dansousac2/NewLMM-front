@@ -1,0 +1,181 @@
+.F-update {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.Name-and-entries {
+    display: flex;
+    width: 27.5vw;
+}
+
+.Name-and-entries h2 {
+    margin-right: 2vh;
+}
+
+.Name-and-entries h4 {
+    margin-top: 0.3vw;    
+}
+
+.Version-and-comment {
+    margin: 0;
+    width: 41vw;
+    display: grid;
+    justify-content: end;
+    text-align: right;
+}
+
+#versionCurriculum {
+    color: #2a7ae1;
+}
+
+.Bt-space-between {
+    margin-right: 3vw;
+}
+
+.Validation-update-curriculum {
+    position: relative;
+    top: 9vh;
+    left: 4.7vw;
+}
+
+.Electronic-authentication {
+    margin-left: 14.3vw;
+}
+
+.boxExperiences {
+    position: relative;
+    top: 9vh;
+    overflow-y: scroll;
+    width: 23.5vw;
+    height: 52vh;
+    background: #eeeeee;
+    border-style: solid;
+    border-color: #606060;
+    border-width: 2px;
+    padding-top: 8vh;
+    padding-left: 1vw;
+}
+
+.Bottom-icons {
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    top: 20vh;
+    height: min-content;
+    width: 95%;
+}
+
+.Bottom-icons h6 {
+    margin-top: 0.7vh;
+    margin-left: 0.5vw;
+}
+
+.Icons-flex {
+   display: flex;
+}
+
+.Bt-size1-updateC {
+    width: 4vw;
+    height: 4vh;
+}
+
+.Entry-Receipts {
+    position: relative;
+    top: 9vh;
+    left: 4.5vw;
+    width: 40vw;
+    height: 52vh;
+    display: block;
+}
+
+.F-update .btn:disabled {
+    background-color: #acacac;
+    border-color: #eeeeee;
+}
+
+.Validation-update-curriculum input {
+    display: none;
+}
+
+.Popup-content-2 .Center {
+    text-align: center;
+    margin-bottom: 6vh;
+}
+
+.Popup-content-2 .Input-hiden {
+    display: none;
+}
+
+.Popup-content-2 .In-line {
+    display: flex;
+    margin-bottom: 4vh;
+}
+
+.Popup-content-2 .Input-arquive {
+    margin-left: 3.5vw;
+    width: 15vw;
+}
+
+.Popup-content-2 .Input-commentary {
+    margin-left: 1vw;
+    width: 15vw;
+}
+
+.Popup-content-2 .Bt-import-Receipt {
+    margin-left: 2vw;
+}
+
+.Popup-content-2 .Icon {
+    width: 30px;
+    margin-right: 10px;
+}
+
+.In-line b {
+    font-size: x-large;
+    vertical-align: middle;
+}
+
+.Buttons-confirm-cancel-receipt {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 9vh;
+}
+
+.Buttons-confirm-cancel-receipt .btn:disabled {
+    background-color: #acacac;
+    border-color: #eeeeee;
+}
+
+.Popup-content-2 .Paragraph-field {
+    width: 90%;
+    height: 8vh;
+    background-color: #dddddd;
+    font-weight: 500;
+    padding-top: 1vh;
+    padding-left: 0.5vw;
+}
+
+.Popup-content-2 .Commentary {
+    width: 90%;
+    height: 4vh;
+    background-color: #dddddd;
+    font-weight: 500;
+    border: solid 1px;
+    border-color: #606060;
+    padding-left: 0.5vw;
+}
+
+.Popup-content-2 .InputsLink {
+    margin-left: 3vw;
+}
+
+.Popup-content-2 .Buttons-link {
+    margin-top: 6vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.boxExperiences .Emphasis {
+    background-color: #dddddd;
+}

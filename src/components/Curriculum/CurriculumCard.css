@@ -1,0 +1,20 @@
+.Card-curriculum {
+    height: 14vh;
+    background-color: #D9D9D9;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.Card-curriculum .Center {
+    display: grid;
+    text-align: center;
+}
+
+.Version-Commentary h1 {
+    color: #2b7ae1;
+}
+
+#exbuttonVL {
+    margin-left: 1vw;
+}

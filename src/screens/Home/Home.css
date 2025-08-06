@@ -1,0 +1,23 @@
+.Text-Home {
+    font-size: 30px;
+    font-family: sans-serif;
+    color: #707070;
+}
+
+#p-final {
+    margin-bottom: 20vh;
+}
+
+.Popup-home h2 {
+    font-size: x-large;
+}
+
+.Popup-home .NameOwner {
+    color: #007df7;
+    font-weight: 700;
+}
+
+.Buttons-home-confimation {
+    display: flex;
+    justify-content: space-around;
+}

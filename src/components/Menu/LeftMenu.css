@@ -1,0 +1,175 @@
+.Fields {
+    display: inline-block;
+    margin-left: 28vw;
+    padding: 5vh 0vw 5vh 0vw;
+}
+
+.Area {
+    background-color: rgb(238, 238, 238);
+    position: fixed;
+    z-index: -1;
+    top: 2%;
+    left: -1%;
+    height: 96%;
+    width: 71vw;
+}
+
+.Image{
+    position: fixed;
+    z-index: -2;
+    background-image: url('../../assets/images/back.png');
+    top: 0vh;
+    left: -21vw;
+    height: 100%;
+    width: 95vw;
+}
+
+.Underline {
+    text-decoration: underline;
+}
+
+.ScheduleValidation01{
+    position: absolute;
+    width: 25%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    background: #007afb;
+}
+
+.ScheduleValidation01 h1{
+    position: absolute;
+    width: 236px;
+    height: 61px;
+    left: 36px;
+    top: 40px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 58px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: sans-serif;
+}
+
+.ScheduleValidation01 h2{
+    position: absolute;
+    width: 60px;
+    height: 51px;
+    left: 178px;
+    top: 30px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 44px;
+    color: #FFFFFF;
+
+}
+
+.ScheduleValidation01 h3{
+    width: 908px;
+    height: 50px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+    color: #000000;
+    margin-left: 24px;
+}
+
+.AllButtons button {
+    display: inline-block;
+    position: initial;
+    margin-top: 2%;
+    margin-bottom: 4%;
+    margin-left: 10%;
+    background: none;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+    width: 430px;
+}
+
+.AllButtons{
+    margin-top: 45%;
+}
+
+#ico-menu-01 {
+    margin-left: -5px;
+}
+
+#ico-menu-02 {
+    margin-right: 6px;
+    margin-bottom: 7px;
+}
+
+#ico-menu-03 {
+    margin-left: -5px;
+    margin-right: 2px;
+    margin-bottom: 7px;
+}
+
+#ico-menu-04 {
+    margin-right: 6px;
+    margin-bottom: 2px;
+}
+
+#ico-menu-05 {
+    margin-bottom: 2px;
+}
+
+#ico-menu-06 {
+    margin-right: 7px;
+    margin-bottom: 2px;
+}
+
+#ico-menu-07 {
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+#ico-menu-08 {
+    margin-right: 6px;
+}
+
+#name-owner {
+    background-color: whitesmoke;
+    width: 14vw;
+    height: 2.8vh;
+    text-align: center;
+    position: absolute;
+    margin-top: 11vh;
+    margin-left: 2vw;
+    margin-bottom: 0;
+    font-weight: 700;
+}
+
+.QtdSolicitation {
+    position: relative;
+    left: 5vw;
+    margin-top: -9.5vh;
+}
+
+#numberQtdSolicitation {
+    position: relative;
+    left: -0.9vw;
+    color: red;
+}
+
+#buttonSSV {
+    margin-top: 3vh;
+}
+
+.Size-SolSched {
+    height: 10vh;
+}
+
+.Size-01 {
+    display: flex;
+    height: 12vh;
+    align-items: center;
+}

@@ -1,0 +1,64 @@
+.Principal {
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    margin-right: 0vw;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Fields .Validation {
+    margin-right: 2vw;
+    height: 88vh;
+}
+
+.TablesDiv {
+    display: flex;
+    justify-content: space-between;
+    --bs-table-striped-bg: #dfdddd;
+    font-weight: 700;
+}
+
+.TablesDiv .CurrTable {
+    text-align: left;
+    width: 30vw;
+}
+
+.TablesDiv .ValidatorTable {
+    text-align: left;
+    width: 29vw;
+}
+
+.ValidatorTable input {
+    position: relative;
+    left: 5vw;
+}
+
+.TablesDiv .DateAndHour {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.TablesDiv .overFlow-y {
+    overflow-y: scroll;
+    height: 70vh;
+}
+
+.header .ButtonScheduling {
+    width: 18vw;
+    box-shadow: 0 10px 0 #003c86;
+    font-weight: 700;
+}
+
+.header .btn:disabled {
+    background-color: #acacac;
+    border-color: #eeeeee;
+}
+
+.header .Change-box-shadow {
+    box-shadow: 0 10px 0 #2c2c2c;
+}

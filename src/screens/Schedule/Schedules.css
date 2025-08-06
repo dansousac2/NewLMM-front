@@ -1,0 +1,141 @@
+#tbl01 {
+    border-color: #6c757d;
+}
+
+#border01 {
+    border: #087ae4;
+    border-style: solid;
+}
+
+#tabButton01 {
+    border-radius: 0%;
+    margin-left: 1vw;
+}
+
+#tabButton02 {
+    border-radius: 0%;
+    margin-left: 1px;
+}
+
+#tabButton03 {
+    border-radius: 0%;
+    margin-left: 1px;
+}
+
+#tabButton04 {
+    border-radius: 0%;
+    margin-left: 1px;
+}
+.table {
+    text-align: center;
+}
+
+.b1{
+    position: absolute;
+    width: 260px;
+    height: 46px;
+    left: 90px;
+    top: 288px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: left;
+    color: #FFFFFF;
+    background: #087ae4;
+    border: #087ae4;
+    
+    
+}
+
+.b2{
+    position: absolute;
+    width: 260px;
+    height: 46px;
+    left: 90px;
+    top: 348px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: left;
+    color: #FFFFFF;
+    background: #087ae4;
+    border: #087ae4;
+
+}
+
+.b3{
+    position: absolute;
+    width: 260px;
+    height: 46px;
+    left: 90px;
+    top: 409px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: left;
+    color: #FFFFFF;
+    background: #087ae4;
+    border: #087ae4;
+}
+
+.b4{
+    position: absolute;
+    width: 260px;
+    height: 46px;
+    left: 90px;
+    top: 469px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: left;
+    color: #FFFFFF;
+    background:#087ae4;
+    border: #087ae4;
+}
+
+.b5{
+    position: absolute;
+    width: 260px;
+    height: 46px;
+    left: 90px;
+    top: 529px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: left;
+    color: #FFFFFF;
+    background: #087ae4;
+    border: #087ae4;
+}
+
+.b6{
+    position: absolute;
+    width: 260px;
+    height: 46px;
+    left: 90px;
+    top: 589px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: left;
+    color: #FFFFFF;
+    background: #087ae4;
+    border: #087ae4;
+
+}
+
+.Margin-1 {
+    margin-right: 2vw;
+}
