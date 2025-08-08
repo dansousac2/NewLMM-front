@@ -1,20 +1,32 @@
-export default class StorageService {
+const createStorageService = () => ({
 
-    setItem(key, value) {
+    setItem: (key, value) => {
+        if(typeof value === 'string') {
+            // evita salvar com aspas no localStorage
+            localStorage.setItem(key, value);
+            return;
+        }
         localStorage.setItem(key, JSON.stringify(value));
-    }
+    },
 
-    getItem(key){
+    getItem: (key) => {
         const item = localStorage.getItem(key);
-        return JSON.parse(item);
-    }
+        // tenta fazer parse apenas se for JSON válido
+        try {
+            return JSON.parse(item);
+        } catch {
+            // retorna como string pura
+            return item;
+        }
+    },
 
-    removeItem(key){
+    removeItem: (key) => {
         localStorage.removeItem(key);
-    }
+    },
 
-    removeAllItems(){
+    removeAllItems: () => {
         localStorage.clear();
     }
+});
 
-}
+export default createStorageService;

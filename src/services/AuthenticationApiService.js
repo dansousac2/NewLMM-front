@@ -1,72 +1,59 @@
-import ApiService, {LOGGED_USER, TOKEN} from "./ApiService";
+import createApiService, { LOGGED_USER, TOKEN } from "./ApiService";
 import StorageService from "./StorageService";
-import { ROLE, TIMESTAMP, SOLICITATIONLIST, FORCEGETSOLICITATIONS } from "../components/Menu/LeftMenu";
 
-export default class AuthenticationApiService extends ApiService {
+const storage = StorageService();
+const api = createApiService('');
 
-    constructor(){
-        super('');
-        this.storageService = new StorageService();
-    }
+const AuthenticationApiService = {
 
-    async login(email, password){
-        const loginDTO = {
-            "email": email,
-            "password": password
-        };
+    login: async (email, password) => {
+        const loginDTO = { email, password };
 
-        try{
-            const response = await this.post('/login', loginDTO);
+        try {
+            const response = await api.post('/login', loginDTO);
 
-            const user = response.data.user;
-            const token = response.data.token;
+            const { user, token } = response.data;
 
-            this.storageService.setItem(LOGGED_USER, user);
-            this.storageService.setItem(TOKEN, token);
+            storage.setItem(LOGGED_USER, user);
+            storage.setItem(TOKEN, token);
+            api.registerToken(token);
 
-            this.registerToken(token);
             return user;
-        } catch(error){
+        } catch (error) {
             return null;
         }
-    }
+    },
 
-    isTokenValid(token){
-        return this.post('/login/verifytoken', token);
-    }
+    logout: async () => {
+        try {
+            await api.post('/logout');
+        } finally {
+            storage.removeAllItems();
+        }
+    },
 
-    logout(){
-        return(
-            this.post('/logout')
-            .then(() => {
-                this.storageService.removeAllItems();
-            })
-        )
-    }
+    getLoggedUser: () => {
+        return storage.getItem(LOGGED_USER);
+    },
 
-    getLoggedUser(){
-        return this.storageService.getItem(LOGGED_USER);
+    getToken: () => {
+        return storage.getItem(TOKEN);
+    },
 
-    }
+    isAuthenticated: async () => {
+        const user = storage.getItem(LOGGED_USER);
+        const token = storage.getItem(TOKEN);
 
-    getToken(){
-        return this.storageService.getItem(TOKEN);
-    }
+        if (!user || !token) return false;
 
-    async isAuthenticated(){
-        const user = this.getLoggedUser();
-        const token = this.getToken();
-
-        if(!user || !token){
+        try {
+            const response = await api.post('/login/verifytoken', token);
+            return response.data;
+        } catch(error) {
+            console.error('Erro ao verificar Token.', error)
             return false;
         }
-
-        const tokenDTO = {
-            "token": token
-        };
-
-        const response = await this.isTokenValid(tokenDTO);
-        return response.data;
     }
-    
-}
+};
+
+export default AuthenticationApiService;

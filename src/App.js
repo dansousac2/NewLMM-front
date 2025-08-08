@@ -4,19 +4,16 @@ import 'toastr/build/toastr.css';
 import 'toastr/build/toastr.min.js';
 import SessionProvider from './main/SessionProvider';
 import AppRoutes from './main/AppRoutes';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-export default class App extends React.Component {
-  render() {
-    return(
-      <div>
+export default function App() {
+  return (
+    <div>
+      <BrowserRouter>
         <SessionProvider>
-          <AppRoutes/>
+          <AppRoutes />
         </SessionProvider>
-        
-      </div>
-    )
-  }
+      </BrowserRouter>
+    </div>
+  );
 }
-
-//<LeftMenu/>

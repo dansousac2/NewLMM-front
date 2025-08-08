@@ -1,61 +1,86 @@
 import React from "react";
-import {Route, BrowserRouter, Switch, Redirect} from "react-router-dom";
-import { AuthConsumer } from "./SessionProvider";
-import Schedules from "../screens/Schedule/Schedules";
-import ScheduleValidation from "../screens/schedulevalidation/ScheduleValidation";
-import UpdateVersions from "../screens/Versions/UpdateVersions";
-import Login from "../screens/Login/Login";
-import Register from "../screens/Register/Register";
-import Home from "../screens/Home/Home";
-import VersionListing from "../screens/Versions/VersionListing";
-import ListSolicitedSchedule from "../screens/Schedule/ListSolicitedSchedule";
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthConsumer } from './SessionProvider';
+
 import ReviewCurriculum from "../screens/ReviewCurriculum/ReviewCurriculum";
 import ReceiptAnalysis from "../screens/ReviewCurriculum/ReceiptAnalysis";
 import ExportPdf from "../screens/Export/ExportPdf";
+import Login from '../views/Login';
+import Register from '../views/Register';
+import Home from '../views/Home';
+import UpdateVersions from '../views/UpdateVersions';
 
-function RestrictedRoute( {component: Component, show, ...props} ) {
-    return(
-        <Route exact {...props} render={ (componentProps) => {
-            if(show){
-                return (
-                    <Component {...componentProps} />
-                )
-            }else{
-                return(
-                    <Redirect to={ {pathname : '/', state : { from: componentProps.location}}} />
-                )
-            }
-        }} />
-    )
+// 🔐 Rota protegida em React Router v6
+function RestrictedRoute({ children, isAuthenticated }) {
+    const location = useLocation();
 
+    if (!isAuthenticated) {
+        return <Navigate to="/" state={{ from: location }} replace />;
+    }
+
+    return children;
 }
 
-function AppRoutes(props) {
+function AppRoutes({ isAuthenticated }) {
     return (
-        <BrowserRouter>
-          <Switch>
-            <Route component = { Login } path="/" exact/>
-            <Route component = { Register } path="/register/" />
-            <RestrictedRoute show={props.isAuthenticated} component = { Home } path="/home/" />
-            <RestrictedRoute show={props.isAuthenticated} component = { UpdateVersions } path="/updateversions/:id" />
-            <RestrictedRoute show={props.isAuthenticated} component = { Schedules } path="/scheduling/" />
-            <RestrictedRoute show={props.isAuthenticated} component = { ScheduleValidation } path="/shedulingvalidation" />
-            <RestrictedRoute show={props.isAuthenticated} component = { VersionListing } path="/versionlisting" />
-            <RestrictedRoute show={props.isAuthenticated} component = { ListSolicitedSchedule } path="/solicitedschedule" />
-            <RestrictedRoute show={props.isAuthenticated} component = { ReviewCurriculum } path="/reviewcurriculum" />
-            <RestrictedRoute show={props.isAuthenticated} component = { ReceiptAnalysis } path="/receiptanalysis/:id/:version/:solicitationId" />
-            <RestrictedRoute show={props.isAuthenticated} component = { ExportPdf } path="/exportpdf" />
-           </Switch> 
-        </BrowserRouter>
+        <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
+            <Route
+                path="/home"
+                element={
+                    <RestrictedRoute isAuthenticated={isAuthenticated}>
+                        <Home />
+                    </RestrictedRoute>
+                }
+            />
 
+            <Route
+                path="/updateversions/:id"
+                element={
+                    <RestrictedRoute isAuthenticated={isAuthenticated}>
+                        <UpdateVersions />
+                    </RestrictedRoute>
+                }
+            />
+
+            <Route
+                path="/exportpdf"
+                element={
+                    <RestrictedRoute isAuthenticated={isAuthenticated}>
+                        <ExportPdf/>
+                    </RestrictedRoute>
+                }
+            />
+
+            <Route
+                path="/reviewcurriculum"
+                element={
+                    <RestrictedRoute isAuthenticated={isAuthenticated}>
+                        <ReviewCurriculum/>
+                    </RestrictedRoute>
+                }
+            />
+            
+            <Route
+                path="/receiptanalysis/:id/:version/:solicitationId"
+                element={
+                    <RestrictedRoute isAuthenticated={isAuthenticated}>
+                        <ReceiptAnalysis/>
+                    </RestrictedRoute>
+                }
+            />
+
+        </Routes>
     );
 }
 
+// Wrapper com contexto de autenticação
 export default () => (
     <AuthConsumer>
-        { (context) => (<AppRoutes isAuthenticated={context.isAuthenticated} />) }
+        {(context) => (
+            <AppRoutes isAuthenticated={context.isAuthenticated} />
+        )}
     </AuthConsumer>
-)
-
-//RestrictedRoute show={props.isAuthenticated} 
+);
