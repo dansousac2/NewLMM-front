@@ -1,3 +1,4 @@
+// factory function sem uso de variáveis no corpo
 const createStorageService = () => ({
 
     setItem: (key, value) => {

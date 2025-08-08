@@ -11,6 +11,7 @@ const httpClient = axios.create({
     withCredentials: true,
 });
 
+// factory function usando variáveis instanciadas no corpo da função
 const createApiService = (endpoint) => {
     const storageService = StorageService();
     const token = storageService.getItem(TOKEN);

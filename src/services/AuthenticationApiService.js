@@ -4,6 +4,7 @@ import StorageService from "./StorageService";
 const storage = StorageService();
 const api = createApiService('');
 
+// objeto literal contendo funções
 const AuthenticationApiService = {
 
     login: async (email, password) => {
@@ -11,7 +12,6 @@ const AuthenticationApiService = {
 
         try {
             const response = await api.post('/login', loginDTO);
-
             const { user, token } = response.data;
 
             storage.setItem(LOGGED_USER, user);

@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useContext } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AuthConsumer } from './SessionProvider';
 
 import ReviewCurriculum from "../screens/ReviewCurriculum/ReviewCurriculum";
 import ReceiptAnalysis from "../screens/ReviewCurriculum/ReceiptAnalysis";
 import ExportPdf from "../screens/Export/ExportPdf";
-import Login from '../views/Login';
-import Register from '../views/Register';
-import Home from '../views/Home';
-import UpdateVersions from '../views/UpdateVersions';
+import Login from '../screens/Login/Login';
+import Register from '../screens/Register/Register';
+import Home from '../screens/Home/Home'
+import UpdateVersions from '../screens/Versions/UpdateVersions'
 
 // 🔐 Rota protegida em React Router v6
 function RestrictedRoute({ children, isAuthenticated }) {
@@ -77,10 +76,7 @@ function AppRoutes({ isAuthenticated }) {
 }
 
 // Wrapper com contexto de autenticação
-export default () => (
-    <AuthConsumer>
-        {(context) => (
-            <AppRoutes isAuthenticated={context.isAuthenticated} />
-        )}
-    </AuthConsumer>
-);
+export default function AppRoutesWrapper() {
+  const context = useContext(AuthContext);
+  return <AppRoutes isAuthenticated={context.isAuthenticated} />;
+}
