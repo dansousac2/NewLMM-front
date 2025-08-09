@@ -1,108 +1,102 @@
-import React from 'react';
-import './Home.css';
-import { Button } from 'reactstrap';
-import { withRouter } from 'react-router';
-import FileUpload from '../../components/FormGroup/FileUpload';
-import { showErrorMessage, showSuccessMessage } from "../../components/Toastr/Toastr";
+import { useState } from "react";
+import { Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
-import HomeService from '../../services/HomeService';
-import AuthenticationApiService from '../../services/AuthenticationApiService';
+import "./Home.css";
 
-import LeftMenu from '../../components/Menu/LeftMenu';
-import PopupSpace from '../../components/FormGroup/PopupSpace';
+import FileUpload from "../../components/FormGroup/FileUpload";
+import { showErrorMessage } from "../../components/Toastr/Toastr";
 
-class Home extends React.Component {
+import HomeService from "../../services/HomeService";
+import AuthenticationApiService from "../../services/AuthenticationApiService";
 
-    constructor() {
-        super();
-        this.service = new HomeService();
-        this.authentication = new AuthenticationApiService();
+import LeftMenu from "../../components/Menu/LeftMenu";
+import PopupSpace from "../../components/FormGroup/PopupSpace";
+
+export default function Home() {
+  const navigate = useNavigate();
+  const homeService = new HomeService();
+  const authentication = new AuthenticationApiService();
+
+  const [owner, setOwner] = useState("");
+  const [renderCurriculumConfirmation, setRenderCurriculumConfirmation] = useState(false);
+  const [file, setFile] = useState(null);
+
+  const sendFile = async () => {
+    setRenderCurriculumConfirmation(false);
+
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("userId", authentication.getLoggedUser().id);
+
+      const response = await homeService.postWithHeaders(data);
+      navigate(`/updateversions/${response.data}`);
+    } catch (error) {
+      console.error(error.response || error);
+      showErrorMessage("Erro ao enviar o arquivo!");
     }
+  };
 
-    state = {
-        curriculumIdentity: "",
-        renderCurriculumConfirmation: false,
-        file: null,
-    }
+  const verifyIdentity = (selectedFile) => {
+    const reader = new FileReader();
+    reader.readAsText(selectedFile);
+    reader.onload = (e) => {
+      const stringXml = e.target.result;
+      const parser = new DOMParser();
+      const docXml = parser.parseFromString(stringXml, "text/xml");
 
-    updateVersions = () => {
-        this.props.history.push("/updateVersions/1");
-    }
+      const ownerName = docXml
+        .querySelector("DADOS-GERAIS")
+        ?.attributes.getNamedItem("NOME-COMPLETO")?.value;
 
-    home = () => {
-        this.props.history.push("/home");
-    }
+      if (!ownerName) {
+        showErrorMessage("Currículo inválido! Reveja o arquivo enviado!");
+        return;
+      }
 
-    sendFile = async () => {
-        this.setState({renderCurriculumConfirmation: false});
-        // com o arquivo do campo input, passamos para um formData que é o tipo usado para multipart
-        const data = new FormData();
-        data.append('file', this.state.file);
-        data.append('userId', this.authentication.getLoggedUser().id);
+      setOwner(ownerName);
+      setRenderCurriculumConfirmation(true);
+      setFile(selectedFile);
+    };
+  };
 
-        this.service.postWithHeaders(data)
-        .then(response => {
-            this.props.history.push(`/updateversions/${response.data}`);
-        }).catch(erro => {
-            console.log(erro.response);
-        });
-    }
+  const cancelImportCurriculum = () => {
+    setOwner("");
+    setRenderCurriculumConfirmation(false);
+    setFile(null);
+  };
 
-    VerifyIdentity = (file) => {
-        const reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = (e) => {
-            const stringXml = e.target.result;
-            var parser = new DOMParser();
-            var docXml = parser.parseFromString(stringXml, "text/xml");
+  return (
+    <div className="Principal Fields">
+      <LeftMenu />
 
-            const owner = docXml.querySelector("DADOS-GERAIS").attributes.getNamedItem("NOME-COMPLETO").value;
-            if(owner === null || owner === undefined) {
-                showErrorMessage('Currículo inválido! Reveja o arquivo enviado!');
-            } else {
-                this.setState({
-                    owner: owner,
-                    renderCurriculumConfirmation: true,
-                    file: file,
-                });
-            }
-        }
-    }
+      <div className="Text-Home">
+        <p>PARA COMEÇAR VOCÊ PODE:</p>
+        <p>
+          - Importar um novo currículo XML, criado na plataforma Lattes, através
+          do botão "IMPORTAR"
+        </p>
+      </div>
 
-    cancelImportCurriculum = () => {
-        this.setState({
-            owner: "",
-            renderCurriculumConfirmation: false,
-            file: null,
-        })
-    }
+      <FileUpload accept=".xml" toSendAttribute={verifyIdentity} />
 
-    render() {
-        return (
-            <div className='Principal Fields'>
-                <LeftMenu/>
-                <div className='Text-Home'>
-                    <p>PARA COMEÇAR VOCÊ PODE:</p>
-                    <p>- Importar um novo currículo XML, criado na plataforma Lattes, através do botão "IMPORTAR"</p>
-                </div>
-                <FileUpload accept=".xml" toSendAttribute={this.VerifyIdentity} />
-
-                <PopupSpace render={this.state.renderCurriculumConfirmation} className="Popup-home">
-                    <h2 className='Center' >Confirmação de identidade do currículo importado</h2>
-                    <br/>
-                    <h2 className='Center NameOwner' >{this.state.owner}</h2>
-                    <br/>
-                    <br/>
-                    <h2 className='Center'>Confirma?</h2>
-                    <div className='Buttons-home-confimation'>
-                        <Button color='primary' size='lg' onClick={() => this.sendFile()}>SIM, SOU EU!</Button>
-                        <Button color='danger' size='lg' onClick={() => this.cancelImportCurriculum()}>NÃO, CANCELAR!</Button>
-                    </div>
-                </PopupSpace>
-            </div>
-        )
-    }
+      <PopupSpace render={renderCurriculumConfirmation} className="Popup-home">
+        <h2 className="Center">Confirmação de identidade do currículo importado</h2>
+        <br />
+        <h2 className="Center NameOwner">{owner}</h2>
+        <br />
+        <br />
+        <h2 className="Center">Confirma?</h2>
+        <div className="Buttons-home-confimation">
+          <Button color="primary" size="lg" onClick={sendFile}>
+            SIM, SOU EU!
+          </Button>
+          <Button color="danger" size="lg" onClick={cancelImportCurriculum}>
+            NÃO, CANCELAR!
+          </Button>
+        </div>
+      </PopupSpace>
+    </div>
+  );
 }
-
-export default withRouter(Home);
-

@@ -1,97 +1,86 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './VersionListing.css';
-import { withRouter } from 'react-router';
 
-import VersionsService from '../../services/VersionsService';
 import AuthenticationApiService from '../../services/AuthenticationApiService';
+import VersionsService from '../../services/VersionsService';
 
-import CurriculumCard from '../../components/Curriculum/CurriculumCard';
-import LeftMenu from '../../components/Menu/LeftMenu';
-import PopupSpace from '../../components/FormGroup/PopupSpace';
 import { Button } from 'reactstrap';
+import CurriculumCard from '../../components/Curriculum/CurriculumCard';
+import PopupSpace from '../../components/FormGroup/PopupSpace';
+import LeftMenu from '../../components/Menu/LeftMenu';
 
+export default function VersionListing() {
+  const service = new VersionsService();
+  const authService = new AuthenticationApiService();
+  const navigate = useNavigate();
 
-class VersionListing extends React.Component {
+  const [curriculumList, setCurriculumList] = useState([]);
+  const [renderConfirmExclusion, setRenderConfirmExclusion] = useState(false);
+  const [curriculumIdToExclude, setCurriculumIdToExclude] = useState(null);
 
-    constructor() {
-        super();
-        this.service = new VersionsService();
-        this.authService = new AuthenticationApiService();
+  useEffect(() => {
+    find();
+  }, []);
+
+  async function find() {
+    try {
+      const response = await service.findAllByUserId(authService.getLoggedUser().id);
+      setCurriculumList(response.data);
+    } catch (error) {
+      console.error(error);
     }
+  }
 
-    state = {
-        version: "",
-        commentaryToNewVersion: "",
-        lastModification: "",
+  function renderPopup(id) {
+    setRenderConfirmExclusion(true);
+    setCurriculumIdToExclude(id);
+  }
 
-        curriculumList: [],
+  function cancelExclusion() {
+    setRenderConfirmExclusion(false);
+    setCurriculumIdToExclude(null);
+  }
 
-        renderConfirmExclusion: false,
-        curriculumIdToExclude: null,
+  async function deleteCurriculum(id) {
+    try {
+      await service.delete(id);
+      await find();
+      setRenderConfirmExclusion(false);
+    } catch (error) {
+      console.error(error);
     }
+  }
 
-    componentDidMount() {
-        this.find();
-    }
+  function editCurriculum(id) {
+    navigate(`/updateversions/${id}`);
+  }
 
-    find = () => {
-        this.service.findAllByUserId(this.authService.getLoggedUser().id)
-            .then(response => {
-                this.setState({ curriculumList: response.data });
-            }).catch(error => {
-                console.log(error);
-            })
-    }
-
-    renderPopup = (id) => {
-        this.setState({
-            renderConfirmExclusion: true,
-            curriculumIdToExclude: id,
-        })
-    }
-
-    cancelExclusion = () => {
-        this.setState({
-            renderConfirmExclusion: false,
-            curriculumIdToExclude: null,
-        })
-    }
-
-    deleteCurriculum = async (id) => {
-        await this.service.delete(id);
-        this.find();
-        this.setState({renderConfirmExclusion: false})
-    }
-
-    editCurriculum = (id) => {
-        this.props.history.push(`/updateversions/${id}`);
-    }
-
-    render() {
-        return (
-            <div className="Versions-Screen">
-                <LeftMenu />
-                <div className='Principal Fields List-curriculum-cards'>
-                    <CurriculumCard curriculums={this.state.curriculumList} className={"All-curriculum-cards"} delete={this.renderPopup} edit={this.editCurriculum} />
-                </div>
-                <PopupSpace render={this.state.renderConfirmExclusion}>
-                    <br />
-                    <br />
-                    <h2 className='Center'><b>Confirmação de exclusão de Versão</b></h2>
-                    <h3 className='Center'>Não será mais possível recuperar esta versão!</h3>
-                    <br />
-                    <br />
-                    <div className='Buttons-exclude-popup'>
-                        <Button id='buttonConfirm' color="danger" size="lg" onClick={() => this.deleteCurriculum(this.state.curriculumIdToExclude)}>
-                            <b>CONFIRMAR</b>
-                        </Button>
-                        <Button id='buttonCancel' color="primary" size="lg" onClick={() => this.cancelExclusion()}>
-                            <b>CANCELAR</b>
-                        </Button>
-                    </div>
-                </PopupSpace>
-            </div>
-        )
-    }
+  return (
+    <div className="Versions-Screen">
+      <LeftMenu />
+      <div className='Principal Fields List-curriculum-cards'>
+        <CurriculumCard
+          curriculums={curriculumList}
+          className={"All-curriculum-cards"}
+          delete={renderPopup}
+          edit={editCurriculum}
+        />
+      </div>
+      <PopupSpace render={renderConfirmExclusion}>
+        <br /><br />
+        <h2 className='Center'><b>Confirmação de exclusão de Versão</b></h2>
+        <h3 className='Center'>Não será mais possível recuperar esta versão!</h3>
+        <br /><br />
+        <div className='Buttons-exclude-popup'>
+          <Button id='buttonConfirm' color="danger" size="lg" onClick={() => deleteCurriculum(curriculumIdToExclude)}>
+            <b>CONFIRMAR</b>
+          </Button>
+          <Button id='buttonCancel' color="primary" size="lg" onClick={cancelExclusion}>
+            <b>CANCELAR</b>
+          </Button>
+        </div>
+      </PopupSpace>
+    </div>
+  );
 }
-export default withRouter(VersionListing);

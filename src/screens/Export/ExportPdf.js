@@ -1,6 +1,5 @@
-import React from "react";
-import { withRouter } from 'react-router';
-import './ExportPdf.css';
+import { useState, useEffect, useRef } from "react";
+import "./ExportPdf.css";
 
 import LeftMenu from "../../components/Menu/LeftMenu";
 import { showErrorMessage } from "../../components/Toastr/Toastr";
@@ -14,117 +13,125 @@ import PdfService from "../../services/PdfService";
 import { getAxcessPath } from "../../services/ServerService";
 import StorageService from "../../services/StorageService";
 
-class ExportPdf extends React.Component {
+export default function ExportPdf() {
+    const [curriculumList, setCurriculumList] = useState([]);
+    const [selectedCurriculum, setSelectedCurriculum] = useState(null);
+    const [renderLoading, setRenderLoading] = useState(false);
+    const [linkPdf, setLinkPdf] = useState("");
 
-    state = {
-        curriculumList: [],
-        selectedCurriculum: null,
-        renderLoading: false,
-        linkPdf: "",
-        queryStringGhost: "",
-    }
+    const linkDownloadRef = useRef(null);
 
-    constructor() {
-        super();
-        this.curriculumService = new VersionsService();
-        this.authService = new AuthenticationApiService();
-        this.pdfService = new PdfService();
-        this.authService = new AuthenticationApiService();
-        this.storage = new StorageService();
-    }
+    const curriculumService = new VersionsService();
+    const authService = new AuthenticationApiService();
+    const pdfService = new PdfService();
+    const storage = new StorageService();
 
-    componentDidMount() {
-        this.find();
-    }
+    // Função para buscar os currículos ao montar o componente
+    useEffect(() => {
+        find();
+    }, []);
 
-    find = () => {
-        this.curriculumService.findAllByUserId(this.authService.getLoggedUser().id)
-        .then(response => {
-            this.setState({curriculumList: response.data});
-        }).catch(error => {
-            showErrorMessage(error.data);
-            console.log(error);
-        })
-    }
+    const find = () => {
+        curriculumService
+            .findAllByUserId(authService.getLoggedUser().id)
+            .then((response) => {
+                setCurriculumList(response.data);
+            })
+            .catch((error) => {
+                showErrorMessage(error.data);
+                console.error(error);
+            });
+    };
 
-    setCurriculumSelected = (curriculum) => {
-        this.setState({selectedCurriculum: curriculum}, () => {
-            if(this.isOnPathList()) {
-                this.setState({linkPdf: this.isOnPathList()});
-            } else {
-                this.setState({linkPdf: ""});
-            }
-        });
-    }
+    const handleCurriculumSelected = (curriculum) => {
+        setSelectedCurriculum(curriculum);
 
-    generatePdf = async () => {
-        this.setState({renderLoading: true})
+        if (isOnPathList(curriculum)) {
+            setLinkPdf(isOnPathList(curriculum));
+        } else {
+            setLinkPdf("");
+        }
+    };
 
-        if(this.state.linkPdf === "") {
-            console.log('foi no banco');
-            await this.pdfService.generate(this.state.selectedCurriculum.id, this.authService.getLoggedUser().id)
-            .then(response => {
-                this.setState({linkPdf: getAxcessPath(response.data) + this.noCache()}, () => {
-                    this.storage.setItem(this.getSelectedCurriculumKeyMap(), this.state.linkPdf);
-                });
-            }).catch(error => {
+    const generatePdf = async () => {
+        if (!selectedCurriculum) return;
+
+        setRenderLoading(true);
+
+        if (linkPdf === "") {
+            console.log("foi no banco");
+            try {
+                const response = await pdfService.generate(
+                    selectedCurriculum.id,
+                    authService.getLoggedUser().id
+                );
+                const newLink = getAxcessPath(response.data) + noCache();
+                setLinkPdf(newLink);
+                storage.setItem(getSelectedCurriculumKeyMap(selectedCurriculum), newLink);
+            } catch (error) {
                 showErrorMessage(error.data);
                 console.log(error);
-            });
+            }
         } else {
-            this.setState({linkPdf: this.storage.getItem(this.getSelectedCurriculumKeyMap())});
+            setLinkPdf(storage.getItem(getSelectedCurriculumKeyMap()));
         }
 
-        //TODO remover tempo de espera
-        await new Promise((resolve, regect) => {
-            setTimeout(() => {
-                this.setState({renderLoading: false});
-                resolve();
-            }, 1500);
-        })
+        setRenderLoading(false);
 
-        this.linkDowload.click();
-    }
+        if (linkDownloadRef.current) {
+            linkDownloadRef.current.click();
+        }
+    };
 
-    isOnPathList = () => {
-        return this.storage.getItem(this.getSelectedCurriculumKeyMap());
-    }
+    const isOnPathList = (curriculum) => {
+        return storage.getItem(getSelectedCurriculumKeyMap(curriculum));
+    };
 
-    noCache = () => {
+    const noCache = () => {
         const qsg = Date.now().toString();
-        this.setState({queryStringGhost: qsg});
+        setQueryStringGhost(qsg);
         console.log(qsg);
         return "?" + qsg;
-    }
+    };
 
-    getSelectedCurriculumKeyMap = () => {
-        const id = this.state.selectedCurriculum.id;
-        const lastMod =this.state.selectedCurriculum.lastModification;
+    const getSelectedCurriculumKeyMap = (curriculum = selectedCurriculum) => {
+        const id = curriculum.id;
+        const lastMod = curriculum.lastModification;
         return id + lastMod;
-    }
+    };
 
-    render() {
-        return(
-            <div className="Principal Fields">
-                <LeftMenu/>
-                <div className="Border-1">
-                    <h1>Selecione uma versão para ser exportada</h1>
-                    <br/>
-                    <div className="Table-div-export">
-                        <CurriculumTableRS curriculums={this.state.curriculumList} versionSelected={this.setCurriculumSelected}/>
-                        <div className="Button-div">
-                            <Button color="primary" size="lg" disabled={this.state.selectedCurriculum === null}
-                                onClick={(() => this.generatePdf())}> 
-                                GERAR PDF 
-                            </Button>
-                            <a hidden={true} ref={elem => this.linkDowload = elem} href={this.state.linkPdf} download="CurriculoLMM-comp" target="_blank"/>
-                        </div>
+    return (
+        <div className="Principal Fields">
+            <LeftMenu />
+            <div className="Border-1">
+                <h1>Selecione uma versão para ser exportada</h1>
+                <br />
+                <div className="Table-div-export">
+                    <CurriculumTableRS
+                        curriculums={curriculumList}
+                        versionSelected={handleCurriculumSelected}
+                    />
+                    <div className="Button-div">
+                        <Button
+                            color="primary"
+                            size="lg"
+                            disabled={!selectedCurriculum}
+                            onClick={generatePdf}
+                        >
+                            GERAR PDF
+                        </Button>
+                        <a
+                            hidden
+                            ref={linkDownloadRef}
+                            href={linkPdf}
+                            download="CurriculoLMM-comp"
+                            target="_blank"
+                            rel="noreferrer"
+                        />
                     </div>
                 </div>
-                <LoadingComp render={this.state.renderLoading}/>
             </div>
-        )
-    }
+            <LoadingComp render={renderLoading} />
+        </div>
+    );
 }
-
-export default withRouter(ExportPdf);
