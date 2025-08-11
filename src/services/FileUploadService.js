@@ -1,13 +1,13 @@
-import React from "react";
-import ApiService from "./ApiService";
+import { createApiService } from "./ApiService";
 
-export default class FileUploadService extends ApiService {
-    
-    constructor() {
-        super('/fileupload')
-    }
+const api = createApiService('/fileupload');
+
+const FileUploadService = () => ({
 
     create(object) {
-        return this.postWithHeaders(object);
-    }
-}
+        return api.postWithHeaders(object);
+    }     
+
+});
+
+export default FileUploadService;

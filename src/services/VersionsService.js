@@ -1,37 +1,36 @@
-import ApiService from './ApiService';
+import {createApiService} from "./ApiService";
 
-export default class VersionsService extends ApiService {
-    
-    constructor() {
-        super('/curriculum')
-    }
+const api = createApiService('/curriculum');
+
+const VersionService = () => ({
 
     create(object) {
-        return this.post('', object);
-    }
+        return api.post('', object);
+    },
 
     update(object) {
-        return this.put('/update', object);
-    }
+        return api.put('/update', object);
+    },
 
     delete(id) {
-        return super.delete(`/delete/${id}`);
-    }
+        return api.delete(`/delete/${id}`);
+    },
 
     findById(id) {
-        return this.get(`/${id}`);
-    }
+        return api.get(`/${id}`);
+    },
 
     findByRequesterIdAndVersionName(id, version) {
-        return this.get(`/ownerandversion?ownerId=${id}&version=${version}`);
-    }
+        return api.get(`/ownerandversion?ownerId=${id}&version=${version}`);
+    },
 
     findAll(){
-        return this.getAll();
-    }
+        return api.getAll();
+    },
 
     findAllByUserId(id){
-        return this.getAllById("/findall", id);
+        return api.getAllById("/findall", id);
     }
+});
 
-}
+export default VersionService;

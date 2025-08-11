@@ -1,4 +1,4 @@
-import createApiService, { LOGGED_USER, TOKEN } from "./ApiService";
+import {createApiService, LOGGED_USER, TOKEN } from "./ApiService";
 import StorageService from "./StorageService";
 
 const storage = StorageService();

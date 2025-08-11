@@ -24,15 +24,16 @@ import LeftMenu from '../../components/Menu/LeftMenu';
 
 import { showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
 
+// Serviços instanciados uma única vez
+const service = VersionService();
+const fileUploadService = FileUploadService();
+const onlyFileUpload = FileUploadWithoutClassCreationService();
+const receiptWithUrlService = ReceiptWithUrlService();
+
+const navigate = useNavigate();
+
 export default function UpdateVersions() {
     const { id } = useParams();
-    const navigate = useNavigate();
-
-    // Serviços instanciados uma única vez
-    const service = useRef(new VersionService()).current;
-    const fileUploadService = useRef(new FileUploadService()).current;
-    const onlyFileUpload = useRef(new FileUploadWithoutClassCreationService()).current;
-    const receiptWithUrlService = useRef(new ReceiptWithUrlService()).current;
 
     // Estados
     const [curriculumId, setCurriculumId] = useState("");

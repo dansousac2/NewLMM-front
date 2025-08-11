@@ -12,7 +12,7 @@ const httpClient = axios.create({
 });
 
 // factory function usando variáveis instanciadas no corpo da função
-const createApiService = (endpoint) => {
+export const createApiService = (endpoint) => {
     const storageService = StorageService();
     const token = storageService.getItem(TOKEN);
 
@@ -43,5 +43,3 @@ const createApiService = (endpoint) => {
         }),
     };
 };
-
-export default createApiService;
