@@ -8,7 +8,7 @@ import UserApiService from '../../services/UserApiService';
 import { AuthContext } from '../../main/SessionProvider';
 
 export default function Register() {
-    const service = new UserApiService();
+    const service = UserApiService;
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ export default function Register() {
         }
 
         try {
-            await service.create(form);
+            service.create(form);
             showSuccessMessage("Usuário Cadastrado com Sucesso!");
 
             const user = await login(form.email, form.password);

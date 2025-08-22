@@ -11,10 +11,11 @@ const httpClient = axios.create({
     withCredentials: true,
 });
 
+const storageService = StorageService();
+const token = storageService.getItem(TOKEN);
+
 // factory function usando variáveis instanciadas no corpo da função
 export const createApiService = (endpoint) => {
-    const storageService = StorageService();
-    const token = storageService.getItem(TOKEN);
 
     if (token) {
         httpClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;

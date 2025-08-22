@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import AuthService from "../services/AuthenticationApiService";
+import AuthenticationService from "../services/AuthenticationApiService";
 import LoadingComp from "../components/Extra/LoadingComp";
+
+const authService = AuthenticationService;
 
 export const AuthContext = React.createContext();
 
@@ -13,12 +15,12 @@ export default function SessionProvider({ children }) {
     const isAuthenticated = loggedUser != null;
 
     const start = useCallback(() => {
-        const user = AuthService.getLoggedUser();
+        const user = authService.getLoggedUser();
         setLoggedUser(user);
     }, []);
 
     const login = useCallback(async (email, password) => {
-        const user = await AuthService.login(email, password);
+        const user = await authService.login(email, password);
         if (user) {
             start();
             return user;
@@ -27,14 +29,14 @@ export default function SessionProvider({ children }) {
     }, [start]);
 
     const end = useCallback(() => {
-        AuthService.logout();
+        authService.logout();
         setLoggedUser(null);
     }, []);
 
     // Check inicial de autenticação
     useEffect(() => {
         async function checkAuth() {
-            const auth = await AuthService.isAuthenticated();
+            const auth = await authService.isAuthenticated();
             if (auth) {
                 start();
             }
