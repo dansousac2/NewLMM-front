@@ -10,10 +10,11 @@ import CurriculumCard from '../../components/Curriculum/CurriculumCard';
 import PopupSpace from '../../components/FormGroup/PopupSpace';
 import LeftMenu from '../../components/Menu/LeftMenu';
 
+const service = VersionsService;
+const authService = AuthenticationApiService;
+const navigate = useNavigate();
+
 export default function VersionListing() {
-  const service = VersionsService;
-  const authService = new AuthenticationApiService();
-  const navigate = useNavigate();
 
   const [curriculumList, setCurriculumList] = useState([]);
   const [renderConfirmExclusion, setRenderConfirmExclusion] = useState(false);
