@@ -89,7 +89,7 @@ export default function ExportPdf() {
 
     const noCache = () => {
         const qsg = Date.now().toString();
-        setQueryStringGhost(qsg);
+        // setQueryStringGhost(qsg);
         console.log(qsg);
         return "?" + qsg;
     };

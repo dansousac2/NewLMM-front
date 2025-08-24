@@ -25,14 +25,16 @@ import LeftMenu from '../../components/Menu/LeftMenu';
 import { showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
 
 // Serviços instanciados uma única vez
-const service = VersionService();
+const service = VersionService;
 const fileUploadService = FileUploadService();
 const onlyFileUpload = FileUploadWithoutClassCreationService();
 const receiptWithUrlService = ReceiptWithUrlService();
 
-const navigate = useNavigate();
 
 export default function UpdateVersions() {
+    
+    const navigate = useNavigate();
+    
     const { id } = useParams();
 
     // Estados
@@ -258,7 +260,7 @@ export default function UpdateVersions() {
     };
 
     // Atualiza o currículo com dados e comprovantes novos
-    updateCurriculum = async () => {
+    const updateCurriculum = async () => {
         try {
             await this.saveNewReceiptsAndSetId();
 
@@ -429,7 +431,7 @@ export default function UpdateVersions() {
                     color="primary"
                     size="lg"
                     className="Bt-space-between"
-                    onClick={updateCurriculum}
+                    const onClick={updateCurriculum}
                     innerRef={el => (buttUpdate.current = el)}
                     title='salvar versão atual'
                 >

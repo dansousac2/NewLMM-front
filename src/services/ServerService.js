@@ -6,8 +6,8 @@ import { showErrorMessage } from "../components/Toastr/Toastr";
 
 export const BASE_HTTP_SERVER = "http://26.95.71.93:8082";
 
-const readFileService = new ReadFileService();
-const storage = new StorageService();
+const readFileService = ReadFileService;
+const storage = StorageService();
 
 export function getAxcessPath(path) {
     return BASE_HTTP_SERVER + path.replace(/\\/g, "/");

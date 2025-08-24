@@ -6,10 +6,12 @@ import { showErrorMessage, showSuccessMessage } from "../../components/Toastr/To
 import { AuthContext } from '../../main/SessionProvider';
 import { Button } from 'reactstrap';
 
-const auth = useContext(AuthContext);
-const navigate = useNavigate();
 
 export default function Login() {
+
+    const auth = useContext(AuthContext);
+    const navigate = useNavigate();
+    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 

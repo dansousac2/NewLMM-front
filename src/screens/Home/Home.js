@@ -13,12 +13,13 @@ import AuthenticationApiService from "../../services/AuthenticationApiService";
 import LeftMenu from "../../components/Menu/LeftMenu";
 import PopupSpace from "../../components/FormGroup/PopupSpace";
 
-const navigate = useNavigate();
 const homeService = HomeService;
 const authentication = AuthenticationApiService;
 
 export default function Home() {
-
+  
+  const navigate = useNavigate();
+  
   const [owner, setOwner] = useState("");
   const [renderCurriculumConfirmation, setRenderCurriculumConfirmation] = useState(false);
   const [file, setFile] = useState(null);

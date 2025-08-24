@@ -1,12 +1,12 @@
-// import ApiService from "./ApiService";
+import { createApiService } from "./ApiService";
 
-// export default class ValidatorCommentaryService extends ApiService {
-    
-//     constructor() {
-//         super('/readfile')
-//     }
+const api = createApiService('/readfile');
 
-//     read(fileName, userId) {
-//         return this.get(`?fileName=${fileName}&userId=${userId}`);
-//     }
-// }
+const ReadFileService = {
+
+    read: async (fileName, userId) => {
+        return api.get(`?fileName=${fileName}&userId=${userId}`);
+    }
+}
+
+export default ReadFileService;
