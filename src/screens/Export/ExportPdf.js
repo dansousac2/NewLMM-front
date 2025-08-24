@@ -16,7 +16,7 @@ import StorageService from "../../services/StorageService";
 const curriculumService = VersionsService;
 const authService = AuthenticationApiService;
 const pdfService = PdfService;
-const storage = new StorageService();
+const storage = StorageService();
 
 export default function ExportPdf() {
     const [curriculumList, setCurriculumList] = useState([]);

@@ -1,13 +1,14 @@
-import React, { useContext } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
-import ReviewCurriculum from "../screens/ReviewCurriculum/ReviewCurriculum";
-import ReceiptAnalysis from "../screens/ReviewCurriculum/ReceiptAnalysis";
 import ExportPdf from "../screens/Export/ExportPdf";
+import Home from '../screens/Home/Home';
 import Login from '../screens/Login/Login';
 import Register from '../screens/Register/Register';
-import Home from '../screens/Home/Home'
-import UpdateVersions from '../screens/Versions/UpdateVersions'
+import ReceiptAnalysis from "../screens/ReviewCurriculum/ReceiptAnalysis";
+import ReviewCurriculum from "../screens/ReviewCurriculum/ReviewCurriculum";
+import UpdateVersions from '../screens/Versions/UpdateVersions';
+import { AuthContext } from './SessionProvider';
 
 // 🔐 Rota protegida em React Router v6
 function RestrictedRoute({ children, isAuthenticated }) {

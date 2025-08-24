@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import './CardReceipt.css';
+import { useEffect, useState } from "react";
 import { Button } from "reactstrap";
+import './CardReceipt.css';
 
-import iconWaiting from '../../assets/images/Waiting.svg';
-import iconChecked from '../../assets/images/Proven.svg';
 import iconInvalid from '../../assets/images/Invalidated.svg';
+import iconChecked from '../../assets/images/Proven.svg';
 import iconRecyclebin from '../../assets/images/recyclebinEmpty.svg';
+import iconWaiting from '../../assets/images/Waiting.svg';
 
-import { createLinkToRead } from "../../services/ServerService";
-import { showErrorMessage, showSuccessMessage } from "../../components/Toastr/Toastr";
 import AuthenticationApiService from "../../services/AuthenticationApiService";
+import { createLinkToRead } from "../../services/ServerService";
 
-const authService = new AuthenticationApiService();
+const authService = AuthenticationApiService;
 
 //TODO realizar import de ícones usados ao invés de trazê-los via props
 function CardReceipt(props) {
