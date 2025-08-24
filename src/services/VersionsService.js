@@ -1,36 +1,36 @@
 import {createApiService} from "./ApiService";
 
-const api = createApiService('/curriculum');
+constapi = createApiService('/curriculum');
 
-const VersionService = () => ({
+const VersionService = {
 
-    create(object) {
+    create: async (object) => {
         return api.post('', object);
     },
 
-    update(object) {
+    update: async (object) => {
         return api.put('/update', object);
     },
 
-    delete(id) {
+    delete: async (id) => {
         return api.delete(`/delete/${id}`);
     },
 
-    findById(id) {
+    findById: async (id) => {
         return api.get(`/${id}`);
     },
 
-    findByRequesterIdAndVersionName(id, version) {
+    findByRequesterIdAndVersionName: async (id, version) => {
         return api.get(`/ownerandversion?ownerId=${id}&version=${version}`);
     },
 
-    findAll(){
+    findAll: async () => {
         return api.getAll();
     },
 
-    findAllByUserId(id){
+    findAllByUserId: async (id) => {
         return api.getAllById("/findall", id);
     }
-});
+};
 
 export default VersionService;

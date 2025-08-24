@@ -6,23 +6,23 @@ const api = createApiService('/user');
 const UserApiService = {
 
     create: async (object) => {
-        return await api.post('', object);
+        return api.post('', object);
     },
 
     update: async (id, object) => {
-        return await api.put(`/${id}`, object);
+        return api.put(`/${id}`, object);
     },
 
     delete: async (id) => {
-        return await api.delete(`/${id}`);
+        return api.delete(`/${id}`);
     },
 
     find: async (params) => {
-        return await api.get(`${params}`);
+        return api.get(`${params}`);
     },
 
     findAllByRole: async (role) => {
-        return await api.get(`/byrole/${role}`);
+        return api.get(`/byrole/${role}`);
     }
 }
 

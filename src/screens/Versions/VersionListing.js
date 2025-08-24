@@ -11,7 +11,7 @@ import PopupSpace from '../../components/FormGroup/PopupSpace';
 import LeftMenu from '../../components/Menu/LeftMenu';
 
 export default function VersionListing() {
-  const service = new VersionsService();
+  const service = VersionsService;
   const authService = new AuthenticationApiService();
   const navigate = useNavigate();
 

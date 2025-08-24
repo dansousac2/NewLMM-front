@@ -48,7 +48,7 @@ export default function Register() {
         }
 
         try {
-            service.create(form);
+            await service.create(form);
             showSuccessMessage("Usuário Cadastrado com Sucesso!");
 
             const user = await login(form.email, form.password);
