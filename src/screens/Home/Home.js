@@ -13,10 +13,11 @@ import AuthenticationApiService from "../../services/AuthenticationApiService";
 import LeftMenu from "../../components/Menu/LeftMenu";
 import PopupSpace from "../../components/FormGroup/PopupSpace";
 
+const navigate = useNavigate();
+const homeService = HomeService;
+const authentication = AuthenticationApiService;
+
 export default function Home() {
-  const navigate = useNavigate();
-  const homeService = new HomeService();
-  const authentication = new AuthenticationApiService();
 
   const [owner, setOwner] = useState("");
   const [renderCurriculumConfirmation, setRenderCurriculumConfirmation] = useState(false);
@@ -30,7 +31,7 @@ export default function Home() {
       data.append("file", file);
       data.append("userId", authentication.getLoggedUser().id);
 
-      const response = await homeService.postWithHeaders(data);
+      const response = await homeService.create(data);
       navigate(`/updateversions/${response.data}`);
     } catch (error) {
       console.error(error.response || error);

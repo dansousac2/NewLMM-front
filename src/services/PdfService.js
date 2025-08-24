@@ -1,12 +1,12 @@
-import ApiService from './ApiService';
+import { createApiService } from "./ApiService";
 
-export default class PdfService extends ApiService {
-    
-    constructor() {
-        super('/export');
-    }
+const api = createApiService('/export');
 
-    generate(curriculumId, ownerId) {
-        return this.get(`?curriculumId=${curriculumId}&ownerId=${ownerId}`);
+const PdfService = {
+
+    generate: async (curriculumId, ownerId) => {
+        return api.get(`?curriculumId=${curriculumId}&ownerId=${ownerId}`);
     }
 }
+
+export default PdfService;

@@ -1,6 +1,6 @@
 import {createApiService} from "./ApiService";
 
-constapi = createApiService('/curriculum');
+const api = createApiService('/curriculum');
 
 const VersionService = {
 

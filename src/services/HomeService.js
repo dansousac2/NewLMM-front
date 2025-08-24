@@ -1,12 +1,12 @@
-import ApiService from './ApiService';
+import { createApiService } from "./ApiService"
 
-export default class HomeService extends ApiService {
-    
-    constructor() {
-        super('/uploadcurriculumxml')
-    }
+const api = createApiService('/uploadcurriculumxml');
 
-    create(object) {
-        return this.postWithHeaders(object);
+const HomeService = {
+
+    create: async (object) => {
+        return api.postWithHeaders(object);
     }
 }
+
+export default HomeService;

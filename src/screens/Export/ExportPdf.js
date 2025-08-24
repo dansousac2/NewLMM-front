@@ -13,6 +13,11 @@ import PdfService from "../../services/PdfService";
 import { getAxcessPath } from "../../services/ServerService";
 import StorageService from "../../services/StorageService";
 
+const curriculumService = VersionsService;
+const authService = AuthenticationApiService;
+const pdfService = PdfService;
+const storage = new StorageService();
+
 export default function ExportPdf() {
     const [curriculumList, setCurriculumList] = useState([]);
     const [selectedCurriculum, setSelectedCurriculum] = useState(null);
@@ -20,11 +25,6 @@ export default function ExportPdf() {
     const [linkPdf, setLinkPdf] = useState("");
 
     const linkDownloadRef = useRef(null);
-
-    const curriculumService = new VersionsService();
-    const authService = new AuthenticationApiService();
-    const pdfService = new PdfService();
-    const storage = new StorageService();
 
     // Função para buscar os currículos ao montar o componente
     useEffect(() => {
