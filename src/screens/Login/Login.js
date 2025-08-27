@@ -61,7 +61,7 @@ export default function Login() {
                         className="form-control"
                         type="email"
                         id="emailImput"
-                        value={email}
+                        placeholder='digite seu email'
                         onChange={e => setEmail(e.target.value)}
                     />
                 </FormGroup>
@@ -70,7 +70,7 @@ export default function Login() {
                         className="form-control"
                         type="password"
                         id="senhaImput"
-                        value={password}
+                        placeholder='digite sua senha'
                         onChange={e => setPassword(e.target.value)}
                     />
                 </FormGroup>
