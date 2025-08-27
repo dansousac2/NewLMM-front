@@ -56,7 +56,7 @@ export default function Login() {
             </h2>
 
             <div className='labels'>
-                <FormGroup label='E-mail' htmlFor='lab01'>
+                <FormGroup label='E-mail' htmlFor='emailImput'>
                     <input
                         className="form-control"
                         type="email"
@@ -65,7 +65,7 @@ export default function Login() {
                         onChange={e => setEmail(e.target.value)}
                     />
                 </FormGroup>
-                <FormGroup label='Senha' htmlFor='lab02'>
+                <FormGroup label='Senha' htmlFor='senhaImput'>
                     <input
                         className="form-control"
                         type="password"
