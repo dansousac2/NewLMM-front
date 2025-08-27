@@ -56,11 +56,11 @@ export default function Login() {
             </h2>
 
             <div className='labels'>
-                <FormGroup label='E-mail ' htmlFor='lab01'>
+                <FormGroup label='E-mail' htmlFor='lab01'>
                     <input
                         className="form-control"
                         type="email"
-                        id="lab01"
+                        id="emailImput"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                     />
@@ -69,7 +69,7 @@ export default function Login() {
                     <input
                         className="form-control"
                         type="password"
-                        id="lab02"
+                        id="senhaImput"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
@@ -77,7 +77,7 @@ export default function Login() {
             </div>
 
             <div className='button'>
-                <Button className="Login" onClick={login}>
+                <Button className="Login" onClick={login} id='loginButton'>
                     LOGIN
                 </Button>
             </div>
