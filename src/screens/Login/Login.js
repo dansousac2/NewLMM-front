@@ -51,8 +51,8 @@ export default function Login() {
         <div className='Login-Screen'>
             <h1>Login</h1>
             <h2>
-                Já possui uma conta?{' '}
-                <a href="/register">clique aqui</a> para fazer o seu cadastro
+                Ainda não possui conta?!<br/>
+                <a href="/register">Clique aqui</a> para fazer o seu cadastro
             </h2>
 
             <div className='labels'>
