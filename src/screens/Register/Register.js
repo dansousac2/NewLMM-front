@@ -66,7 +66,8 @@ export default function Register() {
         <div className='Register-Screen'>
             <h1>Cadastro</h1>
             <h2>
-                Já possui uma conta? <Link to="/">clique aqui</Link> para fazer Login
+                Já possui conta?!<br/>
+                <a href='/'>Clique aqui</a> para realizar login!
             </h2>
 
             <div className='labels'>

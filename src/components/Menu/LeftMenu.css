@@ -80,22 +80,32 @@
     margin-left: 24px;
 }
 
+.AllButtons{
+    margin-top: 45%;
+}
+
 .AllButtons button {
-    display: inline-block;
-    position: initial;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     margin-top: 2%;
     margin-bottom: 4%;
     margin-left: 10%;
-    background: none;
     text-transform: uppercase;
     font-family: sans-serif;
     font-size: 21px;
     font-weight: 700;
-    width: 430px;
+    width: 85%;
 }
 
-.AllButtons{
-    margin-top: 45%;
+.btn-split .left {
+    flex: 0 0 25%;
+    text-align: left;
+}
+
+.btn-split .right {
+    flex: 1;
+    text-align: left;
 }
 
 #ico-menu-01 {
