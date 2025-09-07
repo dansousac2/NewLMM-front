@@ -5,9 +5,9 @@ import { Button } from 'reactstrap';
 import img14 from '../../assets/images/recyclebinEmpty.svg';
 import iconEdit from '../../assets/images/editCurriculum.svg';
 
-function CurriculumCard(props) {
+function CurriculumCard({curriculums, className, edit, delete: onDelete}) {
 
-    const cardsCurriculum = props.curriculums.map(curriculum => {
+    const cardsCurriculum = curriculums.map(curriculum => {
 
         return (
             <div key={curriculum.id} className="Card-curriculum">
@@ -20,10 +20,10 @@ function CurriculumCard(props) {
                     <h4 id='modificationDateAndTime'>{curriculum.lastModification}</h4>
                 </div>
                 <div className="Buttons">
-                    <Button color="primary" onClick={() => props.edit(curriculum.id)}>
+                    <Button color="primary" id='btedit' onClick={() => edit(curriculum.id)}>
                         <img id="ico-edit" className="Button-edit" border="0" src={iconEdit} width="120" height="30" />
                     </Button>
-                    <Button color="danger" id="exbuttonVL" onClick={() => props.delete(curriculum.id)} >
+                    <Button color="danger" id="exbuttonVL" onClick={() => onDelete(curriculum.id)} >
                         <img id="ico-delete" className="Button-delete" border="0" src={img14} width="120" height="30" />
                     </Button>
                 </div>
@@ -32,7 +32,7 @@ function CurriculumCard(props) {
     })
 
     return (
-        <div className={props.className}>
+        <div className={className}>
             {cardsCurriculum}
         </div>
     )
