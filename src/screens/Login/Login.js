@@ -39,7 +39,7 @@ export default function Login() {
                 showSuccessMessage(`Usuário(a) ${user.name}, logado(a)!`);
                 navigate('/home');
             } else {
-                showErrorMessage('Login inválido!');
+                showErrorMessage('Credenciais inválidas!');
             }
         } catch (error) {
             console.error(error);
