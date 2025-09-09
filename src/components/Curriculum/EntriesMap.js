@@ -71,7 +71,7 @@ function EntriesMap({entries, loadReceipts}) {
 
     var groupIdentified = "";
 
-    const entries = entries.map((entry) => {
+    entries.map((entry) => {
 
         if (groupIdentified != entry.group) {
             groupIdentified = entry.group;
