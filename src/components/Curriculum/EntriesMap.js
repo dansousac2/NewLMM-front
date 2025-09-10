@@ -71,7 +71,7 @@ function EntriesMap({entries, loadReceipts}) {
 
     var groupIdentified = "";
 
-    entries.map((entry) => {
+    const entriesToReturn = entries.map((entry) => {
 
         if (groupIdentified != entry.group) {
             groupIdentified = entry.group;
@@ -106,7 +106,7 @@ function EntriesMap({entries, loadReceipts}) {
 
     return (
         <div className="Entries-maped">
-            {entries}
+            {entriesToReturn}
         </div>
     );
 }

@@ -32,9 +32,9 @@ const receiptWithUrlService = ReceiptWithUrlService();
 
 
 export default function UpdateVersions() {
-    
+
     const navigate = useNavigate();
-    
+
     const { id } = useParams();
 
     // Estados
@@ -79,41 +79,40 @@ export default function UpdateVersions() {
 
     // Busca dados no mount e quando id muda
     useEffect(() => {
-        findById(id);
-        if (buttAuthValidator.current) buttAuthValidator.current.disabled = true;
-        if (buttAuthEletronic.current) buttAuthEletronic.current.disabled = true;
-        if (buttUpdate.current) buttUpdate.current.disabled = true;
-
-        const handleBeforeUnload = (event) => {
-            if (!haveAllOriginalReceipts || countNewReceipts > 0) {
-                event.preventDefault();
-                event.returnValue = "";
-                return "";
+        async function findById() {
+            try {
+                const response = await service.findById(id);
+                const curriculum = response.data;
+                setCurriculumId(curriculum.id);
+                setEntryCount(curriculum.entryCount);
+                setOwnerName(curriculum.ownerName);
+                setOwnerId(curriculum.ownerId);
+                setStatus(curriculum.status);
+                setDescription(curriculum.description);
+                setVersion(curriculum.version);
+                setEntryList(curriculum.entryList);
+                setLastModification(curriculum.lastModification);
+            } catch (error) {
+                console.error(error);
             }
-        };
 
-        window.addEventListener("beforeunload", handleBeforeUnload);
-        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-    }, [id, haveAllOriginalReceipts, countNewReceipts]);
+            if (buttAuthValidator.current) buttAuthValidator.current.disabled = true;
+            if (buttAuthEletronic.current) buttAuthEletronic.current.disabled = true;
+            if (buttUpdate.current) buttUpdate.current.disabled = true;
 
-    // Função para carregar currículo por id
-    const findById = async (curriculumId) => {
-        try {
-            const response = await service.findById(curriculumId);
-            const curriculum = response.data;
-            setCurriculumId(curriculum.id);
-            setEntryCount(curriculum.entryCount);
-            setOwnerName(curriculum.ownerName);
-            setOwnerId(curriculum.ownerId);
-            setStatus(curriculum.status);
-            setDescription(curriculum.description);
-            setVersion(curriculum.version);
-            setEntryList(curriculum.entryList);
-            setLastModification(curriculum.lastModification);
-        } catch (error) {
-            console.error(error);
+            const handleBeforeUnload = (event) => {
+                if (!haveAllOriginalReceipts || countNewReceipts > 0) {
+                    event.preventDefault();
+                    event.returnValue = "";
+                    return "";
+                }
+            };
+
+            window.addEventListener("beforeunload", handleBeforeUnload);
+            return () => window.removeEventListener("beforeunload", handleBeforeUnload);
         }
-    };
+        findById();
+    }, [id, haveAllOriginalReceipts, countNewReceipts]);
 
     // Show receipts e manipulação botões
     const showReceipts = async (receipts, element) => {

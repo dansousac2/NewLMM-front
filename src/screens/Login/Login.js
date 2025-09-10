@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; // para react-router v6+
 import './Login.css';
 import FormGroup from "../../components/FormGroup/FormGroup";
@@ -8,6 +8,7 @@ import { Button } from 'reactstrap';
 
 
 export default function Login() {
+    const btLoginRef = useRef(null);
 
     const auth = useContext(AuthContext);
     const navigate = useNavigate();
@@ -47,6 +48,12 @@ export default function Login() {
         }
     };
 
+    const keyEnter = (e) => {
+        if(e.key === 'Enter') {
+            btLoginRef.current.click();
+        }
+    }
+
     return (
         <div className='Login-Screen'>
             <h1>Login</h1>
@@ -72,12 +79,13 @@ export default function Login() {
                         id="senhaImput"
                         placeholder='digite sua senha'
                         onChange={e => setPassword(e.target.value)}
+                        onKeyDown={keyEnter}
                     />
                 </FormGroup>
             </div>
 
             <div className='button'>
-                <Button className="Login" onClick={login} id='loginButton'>
+                <Button className="Login" onClick={login} id='loginButton' innerRef={btLoginRef}>
                     LOGIN
                 </Button>
             </div>

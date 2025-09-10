@@ -3,15 +3,18 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import ExportPdf from "../screens/Export/ExportPdf";
 import Home from '../screens/Home/Home';
+import VersionListing from '../screens/Versions/VersionListing';
 import Login from '../screens/Login/Login';
 import Register from '../screens/Register/Register';
 import ReceiptAnalysis from "../screens/ReviewCurriculum/ReceiptAnalysis";
 import ReviewCurriculum from "../screens/ReviewCurriculum/ReviewCurriculum";
 import UpdateVersions from '../screens/Versions/UpdateVersions';
+
 import { AuthContext } from './SessionProvider';
 
 // 🔐 Rota protegida em React Router v6
 function RestrictedRoute({ children, isAuthenticated }) {
+    
     const location = useLocation();
 
     if (!isAuthenticated) {
@@ -32,6 +35,15 @@ function AppRoutes({ isAuthenticated }) {
                 element={
                     <RestrictedRoute isAuthenticated={isAuthenticated}>
                         <Home />
+                    </RestrictedRoute>
+                }
+            />
+
+            <Route
+                path='/versionlisting'
+                element={
+                    <RestrictedRoute isAuthenticated={isAuthenticated}>
+                        <VersionListing/>
                     </RestrictedRoute>
                 }
             />
