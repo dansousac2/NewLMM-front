@@ -6,6 +6,7 @@
 .Name-and-entries {
     display: flex;
     width: 27.5vw;
+    flex-direction: column;
 }
 
 .Name-and-entries h2 {
@@ -52,15 +53,14 @@
     border-style: solid;
     border-color: #606060;
     border-width: 2px;
-    padding-top: 8vh;
     padding-left: 1vw;
 }
 
 .Bottom-icons {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     position: relative;
-    top: 20vh;
+    top: 17vh;
     height: min-content;
     width: 95%;
 }

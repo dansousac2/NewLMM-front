@@ -407,7 +407,8 @@ export default function UpdateVersions() {
             <LeftMenu />
             <div className='Name-and-entries'>
                 <h2 id='nameCurriculumOwner'>{ownerName}</h2>
-                <h4 id='countEntry'>(Entradas identificadas: {entryCount})</h4>
+                <h4 id='countEntry'>Competências identificadas: {entryCount}</h4>
+                <br/>
             </div>
             <div className='Version-and-comment'>
                 <h2 id='versionCurriculum'>{version}</h2>
@@ -456,7 +457,7 @@ export default function UpdateVersions() {
                     innerRef={el => (buttAuthValidator.current = el)}
                     onClick={() => setRenderPopupImportReceipt(true)}
                 >
-                    (+) AUTEN. VALIDADOR
+                    (+) COMPROVANTE FÍSICO
                 </Button>
                 <Button
                     id='buttonAuthEletronic'
@@ -466,7 +467,7 @@ export default function UpdateVersions() {
                     innerRef={el => (buttAuthEletronic.current = el)}
                     onClick={() => setRenderPopupInformUrl(true)}
                 >
-                    (+) AUTEN. ELETRÔNICA
+                    (+) COMPROVANTE VIA LINK
                 </Button>
             </div>
 
@@ -586,6 +587,8 @@ export default function UpdateVersions() {
             </PopupSpace>
 
             <div className="boxExperiences">
+                <h2>Competências por grupo</h2>
+                <br/>
                 <EntriesMap entries={entryList} loadReceipts={showReceipts} />
             </div>
 
@@ -607,16 +610,8 @@ export default function UpdateVersions() {
                     <h6>Sem Comprovante</h6>
                 </div>
                 <div className='Icons-flex'>
-                    <img id="ico-Waiting" className="Button-Waiting" border="0" src={img9} width="40" height="40" alt="Aguardando Validação" />
-                    <h6>Aguardando Validação</h6>
-                </div>
-                <div className='Icons-flex'>
                     <img id="ico-Proven" className="Button-Proven" border="0" src={img10} width="40" height="40" alt="Comprovado por Validador" />
-                    <h6>Comprovado por Validador</h6>
-                </div>
-                <div className='Icons-flex'>
-                    <img id="ico-Invalidated" className="Button-Invalidated" border="0" src={img11} width="30" height="30" alt="Invalidado" />
-                    <h6>Invalidado</h6>
+                    <h6>Comprovante Enviado</h6>
                 </div>
             </div>
         </div>

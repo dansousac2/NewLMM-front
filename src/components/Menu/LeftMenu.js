@@ -33,7 +33,7 @@ export default function LeftMenu() {
     };
 
     return (
-        <div className="ScheduleValidation01">
+        <div className="LeftMenu">
             <h1 onClick={goTo("/home")}>Lattes</h1>
             <h2>+ +</h2>
             <h5 id="name-owner">{loggedUser?.name || 'Usuário'}</h5>
