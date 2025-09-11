@@ -1,28 +1,13 @@
 .F-update {
     display: flex;
-    flex-wrap: wrap;
 }
 
-.Name-and-entries {
-    display: flex;
-    width: 27.5vw;
-    flex-direction: column;
+.F-update .Div-Menu {
+    flex: 0 0 30%;
 }
 
-.Name-and-entries h2 {
-    margin-right: 2vh;
-}
-
-.Name-and-entries h4 {
-    margin-top: 0.3vw;    
-}
-
-.Version-and-comment {
-    margin: 0;
-    width: 41vw;
-    display: grid;
-    justify-content: end;
-    text-align: right;
+.F-update .Div-Content {
+    flex: 1;
 }
 
 #versionCurriculum {
@@ -31,12 +16,6 @@
 
 .Bt-space-between {
     margin-right: 3vw;
-}
-
-.Validation-update-curriculum {
-    position: relative;
-    top: 9vh;
-    left: 4.7vw;
 }
 
 .Electronic-authentication {
@@ -91,10 +70,6 @@
 .F-update .btn:disabled {
     background-color: #acacac;
     border-color: #eeeeee;
-}
-
-.Validation-update-curriculum input {
-    display: none;
 }
 
 .Popup-content-2 .Center {
@@ -178,4 +153,46 @@
 
 .boxExperiences .Emphasis {
     background-color: #dddddd;
+}
+
+.First-Line {
+    display: flex;
+}
+
+.Name-and-entries {
+    flex: 1;
+    width: 27.5vw;
+    flex-direction: column;
+}
+
+.Name-and-entries h2 {
+    margin-right: 2vh;
+}
+
+.Name-and-entries h4 {
+    margin-top: 0.3vw;    
+}
+
+.Version-and-comment {
+    flex: 1;
+    text-align: right;
+    margin: 1% 1%;
+}
+
+.Secound-Line {
+    display: flex;
+}
+
+.Save-return-buttons {
+    flex: 1;
+}
+
+.Receipts-Buttons {
+    flex: 1;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.Receipts-Buttons button {
+    margin: 0;
 }

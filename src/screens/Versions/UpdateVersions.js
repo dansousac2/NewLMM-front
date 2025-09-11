@@ -403,215 +403,224 @@ export default function UpdateVersions() {
     };
 
     return (
-        <div className='Fields F-update'>
-            <LeftMenu />
-            <div className='Name-and-entries'>
-                <h2 id='nameCurriculumOwner'>{ownerName}</h2>
-                <h4 id='countEntry'>Competências identificadas: {entryCount}</h4>
-                <br/>
-            </div>
-            <div className='Version-and-comment'>
-                <h2 id='versionCurriculum'>{version}</h2>
-                <h4 id='descriptionCurriculum'>{description}</h4>
+        <div className='F-update'>
+
+            <div className='Div-Menu'>
+                <LeftMenu />
             </div>
 
-            <div className='Save-return-buttons'>
-                <Button
-                    id='buttonComeBack'
-                    onClick={() => navigate("/versionlisting")}
-                    color="primary"
-                    size="lg"
-                    className="Bt-space-between"
-                    title='listagem de versões'
-                >
-                    <img id="ico-comeBack" className="Button-ComeBack Bt-size1-updateC" border="0" src={img7} alt="Voltar" />
-                </Button>
-                <Button
-                    id='buttonUpdate'
-                    color="primary"
-                    size="lg"
-                    className="Bt-space-between"
-                    const onClick={updateCurriculum}
-                    innerRef={el => (buttUpdate.current = el)}
-                    title='salvar versão atual'
-                >
-                    <img className="Button-Save Bt-size1-updateC Current-version" border="0" src={img12} alt="Salvar" />
-                </Button>
-                <Button
-                    id='buttonNewVersion'
-                    color="primary"
-                    size="lg"
-                    className="Save Save-new-version"
-                    onClick={() => setRenderPopupCommentaryVersion(true)}
-                    title='salvar nova versão'
-                >
-                    <img className="Button-Save Bt-size1-updateC New-version" border="0" src={img13} alt="Nova Versão" />
-                </Button>
-            </div>
-            <div className='Validation-update-curriculum'>
-                <Button
-                    id='butonAuthValidator'
-                    color="primary"
-                    size="lg"
-                    className="Validator-authentication"
-                    innerRef={el => (buttAuthValidator.current = el)}
-                    onClick={() => setRenderPopupImportReceipt(true)}
-                >
-                    (+) COMPROVANTE FÍSICO
-                </Button>
-                <Button
-                    id='buttonAuthEletronic'
-                    color="primary"
-                    size="lg"
-                    className="Electronic-authentication"
-                    innerRef={el => (buttAuthEletronic.current = el)}
-                    onClick={() => setRenderPopupInformUrl(true)}
-                >
-                    (+) COMPROVANTE VIA LINK
-                </Button>
-            </div>
+            <div className='Div-Content'>
 
-            {/* Popup para envio de arquivo físico */}
-            <PopupSpace render={renderPopupImportReceipt}>
-                <h2 className='Center'>Autenticação - Validador</h2>
-                <div className='In-line'>
-                    <h3>Arquivo:</h3>
-                    <input type='text' disabled={true} className='Input-arquive' placeholder={currentReceiptFileName} />
-                    <input
-                        type='file'
-                        accept='.jpeg, .jpg, .png, .pdf'
-                        className='Input-hiden'
-                        ref={fileInputRef}
-                        onChange={e => setCurrentFile(e.target.files[0])}
-                    />
-                    <Button
-                        id='buttonSendFisicalReceipt'
-                        color="primary"
-                        size="sm"
-                        className="Bt-import-Receipt"
-                        onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                    >
-                        <img className="Icon" border="0" src={iconUpReceipt} alt="Enviar arquivo" />
-                        <b>ENVIAR</b>
-                    </Button>
+                <div className='First-Line'>
+                    <div className='Name-and-entries'>
+                        <h2 id='nameCurriculumOwner'>{ownerName}</h2>
+                        <h4 id='countEntry'>Competências identificadas: {entryCount}</h4>
+                        <br />
+                    </div>
+                    <div className='Version-and-comment'>
+                        <h2 id='versionCurriculum'>{version}</h2>
+                        <h4 id='descriptionCurriculum'>{description}</h4>
+                    </div>
                 </div>
-                <div className='In-line'>
-                    <h3>Comentário:</h3>
-                    <input
-                        type='text'
-                        className='Input-commentary'
-                        placeholder='(opcional)'
-                        onChange={e => setCurrentReceiptCommentary(e.target.value.trim())}
-                    />
-                </div>
-                <div className='Buttons-confirm-cancel-receipt'>
-                    <Button
-                        id='buttonAddFisicalReceipt'
-                        color="primary"
-                        size="lg"
-                        disabled={currentReceiptFileName === "***"}
-                        onClick={addReceiptAndUpdateListCard}
-                    >
-                        <b>ADICIONAR COMP</b>
-                    </Button>
-                    <Button id='buttonCancelSendFisicalReceipt' color="danger" size="lg" onClick={cancelUploadReceipt}>
-                        <b>CANCELAR</b>
-                    </Button>
-                </div>
-            </PopupSpace>
 
-            {/* Popup para adicionar comprovante via link */}
-            <PopupSpace render={renderPopupInformUrl}>
-                <h2 className='Center'>Autenticação - Eletrônica</h2>
-                <div className='InputsLink'>
-                    <h3>Informe o link:</h3>
-                    <textarea
-                        className='Paragraph-field'
-                        autoFocus={true}
-                        onChange={e => setCurrentLink(e.target.value.trim())}
-                    />
+                <div className='Secound-Line'>
+                    
+                    <div className='Save-return-buttons'>
+                        <Button
+                            id='buttonComeBack'
+                            onClick={() => navigate("/versionlisting")}
+                            color="primary"
+                            size="lg"
+                            className="Bt-space-between"
+                            title='listagem de versões'
+                        ><img id="ico-comeBack" className="Button-ComeBack Bt-size1-updateC" border="0" src={img7} alt="Voltar" />
+                        </Button>
+
+                        <Button
+                            id='buttonUpdate'
+                            color="primary"
+                            size="lg"
+                            className="Bt-space-between"
+                            const onClick={updateCurriculum}
+                            innerRef={el => (buttUpdate.current = el)}
+                            title='salvar versão atual'
+                        ><img className="Button-Save Bt-size1-updateC Current-version" border="0" src={img12} alt="Salvar" />
+                        </Button>
+
+                        <Button
+                            id='buttonNewVersion'
+                            color="primary"
+                            size="lg"
+                            className="Save Save-new-version"
+                            onClick={() => setRenderPopupCommentaryVersion(true)}
+                            title='salvar nova versão'
+                        ><img className="Button-Save Bt-size1-updateC New-version" border="0" src={img13} alt="Nova Versão" />
+                        </Button>
+                    </div>
+
+                    <div className='Receipts-Buttons'>
+                        <Button
+                            id='butonAuthValidator'
+                            color="primary"
+                            size="lg"
+                            className="Validator-authentication"
+                            innerRef={el => (buttAuthValidator.current = el)}
+                            onClick={() => setRenderPopupImportReceipt(true)}
+                        > (+) COMPROVANTE FÍSICO </Button>
+                        <Button
+                            id='buttonAuthEletronic'
+                            color="primary"
+                            size="lg"
+                            className="Electronic-authentication"
+                            innerRef={el => (buttAuthEletronic.current = el)}
+                            onClick={() => setRenderPopupInformUrl(true)}
+                        > (+) COMPROVANTE VIA LINK </Button>
+                    </div>
+                </div>
+
+
+                {/* Popup para envio de arquivo físico */}
+                <PopupSpace render={renderPopupImportReceipt}>
+                    <h2 className='Center'>Autenticação - Validador</h2>
+                    <div className='In-line'>
+                        <h3>Arquivo:</h3>
+                        <input type='text' disabled={true} className='Input-arquive' placeholder={currentReceiptFileName} />
+                        <input
+                            type='file'
+                            accept='.jpeg, .jpg, .png, .pdf'
+                            className='Input-hiden'
+                            ref={fileInputRef}
+                            onChange={e => setCurrentFile(e.target.files[0])}
+                        />
+                        <Button
+                            id='buttonSendFisicalReceipt'
+                            color="primary"
+                            size="sm"
+                            className="Bt-import-Receipt"
+                            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                        >
+                            <img className="Icon" border="0" src={iconUpReceipt} alt="Enviar arquivo" />
+                            <b>ENVIAR</b>
+                        </Button>
+                    </div>
+                    <div className='In-line'>
+                        <h3>Comentário:</h3>
+                        <input
+                            type='text'
+                            className='Input-commentary'
+                            placeholder='(opcional)'
+                            onChange={e => setCurrentReceiptCommentary(e.target.value.trim())}
+                        />
+                    </div>
+                    <div className='Buttons-confirm-cancel-receipt'>
+                        <Button
+                            id='buttonAddFisicalReceipt'
+                            color="primary"
+                            size="lg"
+                            disabled={currentReceiptFileName === "***"}
+                            onClick={addReceiptAndUpdateListCard}
+                        >
+                            <b>ADICIONAR COMP</b>
+                        </Button>
+                        <Button id='buttonCancelSendFisicalReceipt' color="danger" size="lg" onClick={cancelUploadReceipt}>
+                            <b>CANCELAR</b>
+                        </Button>
+                    </div>
+                </PopupSpace>
+
+                {/* Popup para adicionar comprovante via link */}
+                <PopupSpace render={renderPopupInformUrl}>
+                    <h2 className='Center'>Autenticação - Eletrônica</h2>
+                    <div className='InputsLink'>
+                        <h3>Informe o link:</h3>
+                        <textarea
+                            className='Paragraph-field'
+                            autoFocus={true}
+                            onChange={e => setCurrentLink(e.target.value.trim())}
+                        />
+                        <br />
+                        <h3>Comentário:</h3>
+                        <input
+                            type='text'
+                            className='Commentary'
+                            placeholder='(opcional)'
+                            onChange={e => setCurrentReceiptCommentary(e.target.value.trim())}
+                        />
+                    </div>
+                    <div className='Buttons-link'>
+                        <Button
+                            id='buttonAddReceiptLink'
+                            color="primary"
+                            size="lg"
+                            disabled={currentLink === ""}
+                            onClick={addLinkReceipt}
+                        >
+                            <b>ADICIONAR COMP</b>
+                        </Button>
+                        <Button id='buttonCancelAddReceiptLink' color="danger" size="lg" onClick={cancelLinkAuth}>
+                            <b>CANCELAR</b>
+                        </Button>
+                    </div>
+                </PopupSpace>
+
+                {/* Popup para adicionar comentário na nova versão */}
+                <PopupSpace render={renderPopupCommentaryVersion}>
+                    <h2 className='Center'>Salvar nova versão do currículo</h2>
+                    <div className='InputsLink'>
+                        <h3>Adicione um comentário:</h3>
+                        <input
+                            type='text'
+                            className='Commentary'
+                            autoFocus={true}
+                            placeholder='(requisitado)'
+                            onChange={e => setCommentaryToNewVersion(e.target.value.trim())}
+                        />
+                    </div>
+                    <br /><br /><br />
+                    <div className='Buttons-link'>
+                        <Button
+                            id='buttonSaveNewVersion'
+                            color="primary"
+                            size="lg"
+                            disabled={commentaryToNewVersion === ""}
+                            onClick={saveNewVersion}
+                        >
+                            <b>SALVAR</b>
+                        </Button>
+
+                        <Button id='buttonCancelSaveNewVersion' color="danger" size="lg" onClick={cancelSaveNewVersion}>
+                            <b>CANCELAR</b>
+                        </Button>
+                    </div>
+                </PopupSpace>
+
+                <div className="boxExperiences">
+                    <h2>Competências por grupo</h2>
                     <br />
-                    <h3>Comentário:</h3>
-                    <input
-                        type='text'
-                        className='Commentary'
-                        placeholder='(opcional)'
-                        onChange={e => setCurrentReceiptCommentary(e.target.value.trim())}
+                    <EntriesMap entries={entryList} loadReceipts={showReceipts} />
+                </div>
+
+                <div className='Entry-Receipts'>
+                    <CardReceipt
+                        update={updateCards}
+                        receipts={receiptList}
+                        deleteMethod={deleteReceipOfList}
+                        iconWaiting={img9}
+                        iconChecked={img10}
+                        iconInvalid={img11}
+                        iconReciclebin={img14}
                     />
                 </div>
-                <div className='Buttons-link'>
-                    <Button
-                        id='buttonAddReceiptLink'
-                        color="primary"
-                        size="lg"
-                        disabled={currentLink === ""}
-                        onClick={addLinkReceipt}
-                    >
-                        <b>ADICIONAR COMP</b>
-                    </Button>
-                    <Button id='buttonCancelAddReceiptLink' color="danger" size="lg" onClick={cancelLinkAuth}>
-                        <b>CANCELAR</b>
-                    </Button>
-                </div>
-            </PopupSpace>
 
-            {/* Popup para adicionar comentário na nova versão */}
-            <PopupSpace render={renderPopupCommentaryVersion}>
-                <h2 className='Center'>Salvar nova versão do currículo</h2>
-                <div className='InputsLink'>
-                    <h3>Adicione um comentário:</h3>
-                    <input
-                        type='text'
-                        className='Commentary'
-                        autoFocus={true}
-                        placeholder='(requisitado)'
-                        onChange={e => setCommentaryToNewVersion(e.target.value.trim())}
-                    />
-                </div>
-                <br /><br /><br />
-                <div className='Buttons-link'>
-                    <Button
-                        id='buttonSaveNewVersion'
-                        color="primary"
-                        size="lg"
-                        disabled={commentaryToNewVersion === ""}
-                        onClick={saveNewVersion}
-                    >
-                        <b>SALVAR</b>
-                    </Button>
-
-                    <Button id='buttonCancelSaveNewVersion' color="danger" size="lg" onClick={cancelSaveNewVersion}>
-                        <b>CANCELAR</b>
-                    </Button>
-                </div>
-            </PopupSpace>
-
-            <div className="boxExperiences">
-                <h2>Competências por grupo</h2>
-                <br/>
-                <EntriesMap entries={entryList} loadReceipts={showReceipts} />
-            </div>
-
-            <div className='Entry-Receipts'>
-                <CardReceipt
-                    update={updateCards}
-                    receipts={receiptList}
-                    deleteMethod={deleteReceipOfList}
-                    iconWaiting={img9}
-                    iconChecked={img10}
-                    iconInvalid={img11}
-                    iconReciclebin={img14}
-                />
-            </div>
-
-            <div className='Bottom-icons'>
-                <div className='Icons-flex'>
-                    <img id="ico-WithoutProof" className="Button-WithoutProof" border="0" src={img8} width="40" height="40" alt="Sem Comprovante" />
-                    <h6>Sem Comprovante</h6>
-                </div>
-                <div className='Icons-flex'>
-                    <img id="ico-Proven" className="Button-Proven" border="0" src={img10} width="40" height="40" alt="Comprovado por Validador" />
-                    <h6>Comprovante Enviado</h6>
+                <div className='Bottom-icons'>
+                    <div className='Icons-flex'>
+                        <img id="ico-WithoutProof" className="Button-WithoutProof" border="0" src={img8} width="40" height="40" alt="Sem Comprovante" />
+                        <h6>Sem Comprovante</h6>
+                    </div>
+                    <div className='Icons-flex'>
+                        <img id="ico-Proven" className="Button-Proven" border="0" src={img10} width="40" height="40" alt="Comprovado por Validador" />
+                        <h6>Comprovante Enviado</h6>
+                    </div>
                 </div>
             </div>
         </div>
