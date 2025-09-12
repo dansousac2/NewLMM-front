@@ -119,19 +119,23 @@ export default function UpdateVersions() {
 
     // Verifica quantidade de comprovantes e habilita/desabilita botões
     useEffect(() => {
-        const numbReceipts = receiptList.length;
+        // Ao carregar a página não entrada/competência selecionada, logo não analisa comprovantes
+        if(currentEntry) {
 
-        if (buttAuthValidator.current && buttAuthEletronic.current) {
-            if (numbReceipts === 5) {
-                // máximo de 5 comprovantes
-                buttAuthValidator.current.disabled = true;
-                buttAuthEletronic.current.disabled = true;
-            } else if (numbReceipts === 0) {
-                buttAuthValidator.current.disabled = false;
-                buttAuthEletronic.current.disabled = false;
-                showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
-            }
-        };
+            const numbReceipts = receiptList.length;
+    
+            if (buttAuthValidator.current && buttAuthEletronic.current) {
+                if (numbReceipts === 5) {
+                    // máximo de 5 comprovantes
+                    buttAuthValidator.current.disabled = true;
+                    buttAuthEletronic.current.disabled = true;
+                } else if (numbReceipts === 0) {
+                    buttAuthValidator.current.disabled = false;
+                    buttAuthEletronic.current.disabled = false;
+                    showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
+                }
+            };
+        }
     },[receiptList]);
 
     // Show receipts e manipulação botões
