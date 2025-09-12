@@ -14,7 +14,7 @@ const service = VersionsService;
 const authService = AuthenticationApiService;
 
 export default function VersionListing() {
-  
+
   const navigate = useNavigate();
 
   const [curriculumList, setCurriculumList] = useState([]);
@@ -60,29 +60,38 @@ export default function VersionListing() {
 
   return (
     <div className="Versions-Screen">
-      <LeftMenu />
-      <div className='Principal Fields List-curriculum-cards'>
-        <CurriculumCard
-          curriculums={curriculumList}
-          className={"All-curriculum-cards"}
-          delete={renderPopup}
-          edit={editCurriculum}
-        />
+
+      <div className='Menu'>
+        <LeftMenu />
       </div>
-      <PopupSpace render={renderConfirmExclusion}>
-        <br /><br />
-        <h2 className='Center'><b>Confirmação de exclusão de Versão</b></h2>
-        <h3 className='Center'>Não será mais possível recuperar esta versão!</h3>
-        <br /><br />
-        <div className='Buttons-exclude-popup'>
-          <Button id='buttonConfirm' color="danger" size="lg" onClick={() => deleteCurriculum(curriculumIdToExclude)}>
-            <b>CONFIRMAR</b>
-          </Button>
-          <Button id='buttonCancel' color="primary" size="lg" onClick={cancelExclusion}>
-            <b>CANCELAR</b>
-          </Button>
+
+      <div className='Body'>
+
+        <div className='List-curriculum-cards'>
+          <CurriculumCard
+            curriculums={curriculumList}
+            className={"All-curriculum-cards"}
+            delete={renderPopup}
+            edit={editCurriculum}
+          />
         </div>
-      </PopupSpace>
+        
+        <PopupSpace render={renderConfirmExclusion}>
+          <br /><br />
+          <h2 className='Center'><b>Confirmação de exclusão de Versão</b></h2>
+          <h3 className='Center'>Não será mais possível recuperar esta versão!</h3>
+          <br /><br />
+          <div className='Buttons-exclude-popup'>
+            <Button id='buttonConfirm' color="danger" size="lg" onClick={() => deleteCurriculum(curriculumIdToExclude)}>
+              <b>CONFIRMAR</b>
+            </Button>
+            <Button id='buttonCancel' color="primary" size="lg" onClick={cancelExclusion}>
+              <b>CANCELAR</b>
+            </Button>
+          </div>
+        </PopupSpace>
+      </div>
+
     </div>
   );
 }

@@ -10,3 +10,19 @@
     display: flex;
     justify-content: space-around;
 }
+
+.Versions-Screen {
+    display: flex;
+}
+
+.Menu {
+    flex: 0 0 30%;
+}
+
+.Body {
+    flex: 1;
+}
+
+.List-curriculum-cards {
+    margin-top: 2%;
+}
