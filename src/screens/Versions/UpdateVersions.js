@@ -38,6 +38,7 @@ export default function UpdateVersions() {
     const { id } = useParams();
 
     // Estados
+    // O setState do react é assíncrono
     const [curriculumId, setCurriculumId] = useState("");
     const [entryCount, setEntryCount] = useState("");
     const [ownerName, setOwnerName] = useState("");
@@ -68,6 +69,8 @@ export default function UpdateVersions() {
     const [haveAllOriginalReceipts, setHaveAllOriginalReceipts] = useState(true);
 
     const [updateCards, setUpdateCards] = useState(0);
+
+    const [currentEntry, setCurrentEntry] = useState(null);
 
     // Refs para botões que manipulam "disabled"
     const buttAuthValidator = useRef(null);
@@ -112,15 +115,34 @@ export default function UpdateVersions() {
             return () => window.removeEventListener("beforeunload", handleBeforeUnload);
         }
         findById();
-    }, [id, haveAllOriginalReceipts, countNewReceipts]);
+    }, [id]);
+
+    // Verifica quantidade de comprovantes e habilita/desabilita botões
+    useEffect(() => {
+        const numbReceipts = receiptList.length;
+
+        if (buttAuthValidator.current && buttAuthEletronic.current) {
+            if (numbReceipts === 5) {
+                // máximo de 5 comprovantes
+                buttAuthValidator.current.disabled = true;
+                buttAuthEletronic.current.disabled = true;
+            } else if (numbReceipts === 0) {
+                buttAuthValidator.current.disabled = false;
+                buttAuthEletronic.current.disabled = false;
+                showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
+            }
+        };
+    },[receiptList]);
 
     // Show receipts e manipulação botões
+    // realiza alterações apenas se a competência já não estiver selecionada
     const showReceipts = async (receipts, element) => {
-        setReceiptList(receipts);
-        if (buttAuthValidator.current) buttAuthValidator.current.disabled = false;
-        if (buttAuthEletronic.current) buttAuthEletronic.current.disabled = false;
-        emphasis(element);
-        verifyReceipts();
+        if (currentEntry != element) {
+            setCurrentEntry(element);
+
+            setReceiptList(receipts);
+            emphasis(element);
+        }
     };
 
     // Adiciona destaque na entry clicada
@@ -149,7 +171,6 @@ export default function UpdateVersions() {
         }
 
         await deleteOfEntry(id);
-        verifyReceipts();
     };
 
     // Remove item do receiptList por id
@@ -161,23 +182,6 @@ export default function UpdateVersions() {
     // Remove arquivo novo da lista de arquivos
     const removeFromNewReceips = (id) => {
         setNewReceiptsFiles(prev => prev.filter(file => file.id !== id));
-    };
-
-    // Verifica quantos comprovantes e habilita/desabilita botões
-    const verifyReceipts = () => {
-        const numbReceipts = receiptList.length;
-
-        if (buttAuthValidator.current && buttAuthEletronic.current) {
-            if (numbReceipts === 5) {
-                // máximo de 5 comprovantes
-                buttAuthValidator.current.disabled = true;
-                buttAuthEletronic.current.disabled = true;
-            } else if (numbReceipts === 0) {
-                buttAuthValidator.current.disabled = false;
-                buttAuthEletronic.current.disabled = false;
-                showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
-            }
-        }
     };
 
     // Atualiza arquivo atual para upload
@@ -244,7 +248,6 @@ export default function UpdateVersions() {
     // Adiciona comprovante e atualiza estado
     const addReceiptAndUpdateListCard = async () => {
         await addNewReceipt();
-        verifyReceipts();
         cancelUploadReceipt();
         if (buttUpdate.current) buttUpdate.current.disabled = false;
     };
@@ -317,7 +320,6 @@ export default function UpdateVersions() {
     // Adiciona comprovante via link
     const addLinkReceipt = async () => {
         await addNewReceipt();
-        verifyReceipts();
         cancelLinkAuth();
     };
 
@@ -558,6 +560,7 @@ export default function UpdateVersions() {
                             onChange={e => setCurrentReceiptCommentary(e.target.value.trim())}
                         />
                     </div>
+
                     <div className='Buttons-link'>
                         <Button
                             id='buttonAddReceiptLink'
@@ -568,6 +571,7 @@ export default function UpdateVersions() {
                         >
                             <b>ADICIONAR COMP</b>
                         </Button>
+
                         <Button id='buttonCancelAddReceiptLink' color="danger" size="lg" onClick={cancelLinkAuth}>
                             <b>CANCELAR</b>
                         </Button>
