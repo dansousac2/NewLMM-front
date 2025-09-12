@@ -22,7 +22,7 @@
     margin-left: 14.3vw;
 }
 
-.boxExperiences {
+.Box-Experiences {
     position: relative;
     top: 9vh;
     overflow-y: scroll;
@@ -151,7 +151,7 @@
     justify-content: space-around;
 }
 
-.boxExperiences .Emphasis {
+.Box-Experiences .Emphasis {
     background-color: #dddddd;
 }
 
@@ -195,4 +195,8 @@
 
 .Receipts-Buttons button {
     margin: 0;
+}
+
+.Third-Line {
+    display: flex;
 }

@@ -169,19 +169,10 @@ export default function UpdateVersions() {
 
         if (buttAuthValidator.current && buttAuthEletronic.current) {
             if (numbReceipts === 5) {
+                // máximo de 5 comprovantes
                 buttAuthValidator.current.disabled = true;
                 buttAuthEletronic.current.disabled = true;
-            } else if (numbReceipts > 1) {
-                buttAuthValidator.current.disabled = false;
-                buttAuthEletronic.current.disabled = true;
-            } else if (numbReceipts === 1) {
-                buttAuthValidator.current.disabled = false;
-                buttAuthEletronic.current.disabled = true;
-
-                if (receiptList[0]?.url != null) {
-                    buttAuthValidator.current.disabled = true;
-                }
-            } else {
+            } else if (numbReceipts === 0) {
                 buttAuthValidator.current.disabled = false;
                 buttAuthEletronic.current.disabled = false;
                 showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
@@ -424,7 +415,7 @@ export default function UpdateVersions() {
                 </div>
 
                 <div className='Secound-Line'>
-                    
+
                     <div className='Save-return-buttons'>
                         <Button
                             id='buttonComeBack'
@@ -478,10 +469,30 @@ export default function UpdateVersions() {
                     </div>
                 </div>
 
+                <div className='Third-Line'>
+
+                    <div className="Box-Experiences">
+                        <h2>Competências por grupo</h2>
+                        <br />
+                        <EntriesMap entries={entryList} loadReceipts={showReceipts} />
+                    </div>
+
+                    <div className='Entry-Receipts'>
+                        <CardReceipt
+                            update={updateCards}
+                            receipts={receiptList}
+                            deleteMethod={deleteReceipOfList}
+                            iconWaiting={img9}
+                            iconChecked={img10}
+                            iconInvalid={img11}
+                            iconReciclebin={img14}
+                        />
+                    </div>
+                </div>
 
                 {/* Popup para envio de arquivo físico */}
                 <PopupSpace render={renderPopupImportReceipt}>
-                    <h2 className='Center'>Autenticação - Validador</h2>
+                    <h2 className='Center'>Upload de Arquivo</h2>
                     <div className='In-line'>
                         <h3>Arquivo:</h3>
                         <input type='text' disabled={true} className='Input-arquive' placeholder={currentReceiptFileName} />
@@ -530,7 +541,7 @@ export default function UpdateVersions() {
 
                 {/* Popup para adicionar comprovante via link */}
                 <PopupSpace render={renderPopupInformUrl}>
-                    <h2 className='Center'>Autenticação - Eletrônica</h2>
+                    <h2 className='Center'>Link de Comprovante</h2>
                     <div className='InputsLink'>
                         <h3>Informe o link:</h3>
                         <textarea
@@ -593,24 +604,6 @@ export default function UpdateVersions() {
                         </Button>
                     </div>
                 </PopupSpace>
-
-                <div className="boxExperiences">
-                    <h2>Competências por grupo</h2>
-                    <br />
-                    <EntriesMap entries={entryList} loadReceipts={showReceipts} />
-                </div>
-
-                <div className='Entry-Receipts'>
-                    <CardReceipt
-                        update={updateCards}
-                        receipts={receiptList}
-                        deleteMethod={deleteReceipOfList}
-                        iconWaiting={img9}
-                        iconChecked={img10}
-                        iconInvalid={img11}
-                        iconReciclebin={img14}
-                    />
-                </div>
 
                 <div className='Bottom-icons'>
                     <div className='Icons-flex'>
