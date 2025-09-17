@@ -6,95 +6,88 @@ import ReceiptWithUrlService from '../../services/ReceiptWithUrlService';
 import VersionService from '../../services/VersionsService';
 import './UpdateVersions.css';
 
-import img7 from '../../assets/images/ComeBack.svg';
+import imgComeBack from '../../assets/images/ComeBack.svg';
 import img11 from '../../assets/images/Invalidated.svg';
-import img10 from '../../assets/images/Proven.svg';
-import img12 from '../../assets/images/Save.svg';
-import img9 from '../../assets/images/Waiting.svg';
-import img8 from '../../assets/images/WithoutProof.svg';
-import img13 from '../../assets/images/createNewCurriculum.svg';
+import imgReceiptSent from '../../assets/images/Proven.svg';
+import imgSave from '../../assets/images/Save.svg';
+import imgWaitingSave from '../../assets/images/Waiting.svg';
+import imgWithoutRceipt from '../../assets/images/WithoutProof.svg';
+import imgNewVersion from '../../assets/images/createNewCurriculum.svg';
 import img14 from '../../assets/images/recyclebinEmpty.svg';
-import iconUpReceipt from '../../assets/images/uploadReceipt.svg';
+import imgIconUpReceipt from '../../assets/images/uploadReceipt.svg';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import CardReceipt from '../../components/Curriculum/CardReceipt';
 import PopupSpace from '../../components/FormGroup/PopupSpace';
 import LeftMenu from '../../components/Menu/LeftMenu';
+import { WAITING_SAVE } from '../../components/Curriculum/CardReceipt';
 
-import { showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
+import { showErrorMessage, showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
+import { version } from 'toastr';
 
-// Serviços instanciados uma única vez
+// Serviços
 const service = VersionService;
-const fileUploadService = FileUploadService();
 const onlyFileUpload = FileUploadWithoutClassCreationService();
+const fileUploadService = FileUploadService();
 const receiptWithUrlService = ReceiptWithUrlService();
-
 
 export default function UpdateVersions() {
 
     const navigate = useNavigate();
-
-    const { id } = useParams();
+    let { id: idParam } = useParams();
 
     // Estados
-    // O setState do react é assíncrono
-    const [curriculumId, setCurriculumId] = useState("");
-    const [entryCount, setEntryCount] = useState("");
-    const [ownerName, setOwnerName] = useState("");
-    const [ownerId, setOwnerId] = useState("");
-    const [status, setStatus] = useState("");
-    const [description, setDescription] = useState("");
-    const [version, setVersion] = useState("");
-    const [entryList, setEntryList] = useState([]);
-    const [lastModification, setLastModification] = useState("");
+    // O setState do react é assíncrono, mas só mostra o valor atualizado após nova renderização
+    /* entryCount; ownerName; ownerId; description; version; entryList; lastModification */
+    const [curriculum, setCurriculum] = useState({
+        entryCount: 0, 
+        ownerName: '', 
+        ownerId: 0, 
+        description: '', 
+        version: '', 
+        entryList: [], 
+        lastModification: ''
+    }); 
 
-    const [activeEntry, setActiveEntry] = useState(null);
+    const [currentEntry, setCurrentEntry] = useState(null);
     const [receiptList, setReceiptList] = useState([]);
 
+    const [newReceiptsFiles, setNewReceiptsFiles] = useState([]);
+    
+    const [renderPopupCommentaryVersion, setRenderPopupCommentaryVersion] = useState(false);
+    const [commentaryToNewVersion, setCommentaryToNewVersion] = useState("");
+
+    const [focusCurrentEntry, setFocusCurrentEntry] = useState(null);
+
     const [renderPopupImportReceipt, setRenderPopupImportReceipt] = useState(false);
+    const [renderPopupInformUrl, setRenderPopupInformUrl] = useState(false);
+
     const [currentReceiptFile, setCurrentReceiptFile] = useState(null);
     const [currentReceiptFileName, setCurrentReceiptFileName] = useState("***");
     const [currentReceiptCommentary, setCurrentReceiptCommentary] = useState("");
 
-    const [newReceiptsFiles, setNewReceiptsFiles] = useState([]);
-    const [countNewReceipts, setCountNewReceipts] = useState(0);
-
-    const [renderPopupInformUrl, setRenderPopupInformUrl] = useState(false);
     const [currentLink, setCurrentLink] = useState("");
 
-    const [renderPopupCommentaryVersion, setRenderPopupCommentaryVersion] = useState(false);
-    const [commentaryToNewVersion, setCommentaryToNewVersion] = useState("");
-
+    const [countNewReceipts, setCountNewReceipts] = useState(0);
     const [haveAllOriginalReceipts, setHaveAllOriginalReceipts] = useState(true);
-
     const [updateCards, setUpdateCards] = useState(0);
 
-    const [currentEntry, setCurrentEntry] = useState(null);
-
-    // Refs para botões que manipulam "disabled"
+    const [countId, setCountId] = useState(0);
+    
+    // Refs para botões
     const buttAuthValidator = useRef(null);
     const buttAuthEletronic = useRef(null);
     const buttUpdate = useRef(null);
-
-    // Ref para input file hidden
+    // Ref para que botão chame componente de input de arquivo
     const fileInputRef = useRef(null);
 
     // Busca dados no mount e quando id muda
     useEffect(() => {
         async function findById() {
             try {
-                const response = await service.findById(id);
-                const curriculum = response.data;
-                setCurriculumId(curriculum.id);
-                setEntryCount(curriculum.entryCount);
-                setOwnerName(curriculum.ownerName);
-                setOwnerId(curriculum.ownerId);
-                setStatus(curriculum.status);
-                setDescription(curriculum.description);
-                setVersion(curriculum.version);
-                setEntryList(curriculum.entryList);
-                setLastModification(curriculum.lastModification);
+                const response = await service.findById(idParam);
+                setCurriculum(response.data);
             } catch (error) {
                 console.error(error);
             }
@@ -104,26 +97,31 @@ export default function UpdateVersions() {
             if (buttUpdate.current) buttUpdate.current.disabled = true;
 
             const handleBeforeUnload = (event) => {
-                if (!haveAllOriginalReceipts || countNewReceipts > 0) {
+                if (!haveAllOriginalReceipts) {
                     event.preventDefault();
                     event.returnValue = "";
                     return "";
                 }
             };
 
+            // adiciona o evento de prevenção de navegação
             window.addEventListener("beforeunload", handleBeforeUnload);
+            
+            // Função de Limpeza do useEfect
+            // remoção para prevenir vazamentos de memória
             return () => window.removeEventListener("beforeunload", handleBeforeUnload);
         }
-        findById();
-    }, [id]);
+
+        findById()
+    }, [idParam]);
 
     // Verifica quantidade de comprovantes e habilita/desabilita botões
     useEffect(() => {
         // Ao carregar a página não entrada/competência selecionada, logo não analisa comprovantes
-        if(currentEntry) {
+        if (currentEntry) {
 
             const numbReceipts = receiptList.length;
-    
+
             if (buttAuthValidator.current && buttAuthEletronic.current) {
                 if (numbReceipts === 5) {
                     // máximo de 5 comprovantes
@@ -136,86 +134,71 @@ export default function UpdateVersions() {
                 }
             };
         }
-    },[receiptList]);
+    }, [receiptList]);
 
-    // Show receipts e manipulação botões
+    // Mostrar comprovantes e manipulação botões
     // realiza alterações apenas se a competência já não estiver selecionada
+    // parâmetro receipts é recebido de componente EntriesMap
     const showReceipts = async (receipts, element) => {
         if (currentEntry != element) {
             setCurrentEntry(element);
-
-            setReceiptList(receipts);
             emphasis(element);
+            setReceiptList(receipts);
         }
     };
 
     // Adiciona destaque na entry clicada
     const emphasis = (element) => {
-        if (activeEntry !== null) {
-            activeEntry.classList.remove('Emphasis');
+        if (focusCurrentEntry !== null) {
+            focusCurrentEntry.classList.remove('Emphasis');
         }
         element.classList.add('Emphasis');
-        setActiveEntry(element);
+        setFocusCurrentEntry(element);
     };
 
-    // Remove comprovante da lista
-    const deleteReceipOfList = async (id, isFisicalFile) => {
-        if (`${id}`.includes("new")) {
-            if (isFisicalFile) {
-                removeFromNewReceips(id);
-            }
-            countNewReceiptRemove();
-
-            if (countNewReceipts - 1 <= 0 && haveAllOriginalReceipts) {
-                if (buttUpdate.current) buttUpdate.current.disabled = true;
-            }
-        } else {
-            setHaveAllOriginalReceipts(false);
-            if (buttUpdate.current) buttUpdate.current.disabled = false;
-        }
-
-        await deleteOfEntry(id);
-    };
-
-    // Remove item do receiptList por id
-    const deleteOfEntry = async (id) => {
-        setReceiptList(prev => prev.filter(rec => rec.id !== id));
-        setUpdateCards(prev => prev + 1);
-    };
-
-    // Remove arquivo novo da lista de arquivos
-    const removeFromNewReceips = (id) => {
-        setNewReceiptsFiles(prev => prev.filter(file => file.id !== id));
-    };
-
-    // Atualiza arquivo atual para upload
-    const setCurrentFile = (file) => {
-        if (file != null) {
-            setCurrentReceiptFileName(file.name);
-            setCurrentReceiptFile(file);
+    // Atualiza o currículo com dados e comprovantes novos
+    const updateCurriculum = async () => {
+        try {
+            setCurriculum(prev => ({...prev, lastModification: new Date()}))
+            await service.update(curriculum);
+            showSuccessMessage('Alterações salvas com sucesso! Atualizando página!');
+            window.location.reload();
+        } catch (error) {
+            console.log(error);
+            showErrorMessage('Ocorreu um erro ao tentar atualizar o currículo.')
         }
     };
 
-    // Cancela upload atual
-    const cancelUploadReceipt = () => {
-        setRenderPopupImportReceipt(false);
-        setCurrentReceiptFile(null);
-        setCurrentReceiptFileName("***");
-        setCurrentReceiptCommentary("");
+    // Salva nova versão do currículo
+    const saveNewVersion = async () => {
+
+        // remove id e atualiza data de modificação para salvar no banco.
+        setCurriculum(prev => ({...prev, id: null, lastModification: new Date()}))
+        try {
+            const response = await service.create(curriculum);
+            if (newReceiptsFiles.length > 0) {
+                await onlySendNewFiles(response.data.entryList);
+            }
+            showSuccessMessage("Nova versão salva com sucesso! Atualizando página para edição da nova versão!");
+            idParam = response.data.id;
+        } catch (error) {
+            console.log(error);
+            showErrorMessage('Erro ao salvar nova versão.')
+        }
     };
 
-    // Contadores para novos comprovantes
-    const countNewReceiptAdd = () => {
-        const count = countNewReceipts + 1;
-        setCountNewReceipts(count);
-        return count;
+    // Cancela salvar nova versão
+    const cancelSaveNewVersion = () => {
+        setRenderPopupCommentaryVersion(false);
+        setCommentaryToNewVersion("");
     };
 
-    const countNewReceiptRemove = () => {
-        setCountNewReceipts(prev => prev - 1);
+    // Adiciona comprovante (link/físico)
+    const addReceipt = async () => {
+        await addNewReceipt();
+        closePopups();
     };
 
-    // Adiciona novo comprovante
     const addNewReceipt = async () => {
         let receipt;
 
@@ -224,11 +207,11 @@ export default function UpdateVersions() {
             const indexDot = nameFile.indexOf(".");
 
             receipt = {
-                id: `new${countNewReceiptAdd()}`,
+                id: generateId(),
                 name: nameFile.substring(0, indexDot),
                 extension: nameFile.substring(indexDot),
                 commentary: currentReceiptCommentary,
-                status: "WAITING_VALIDATION",
+                status: WAITING_SAVE,
                 url: null,
                 lastModified: `${currentReceiptFile.lastModified}`,
             };
@@ -238,140 +221,39 @@ export default function UpdateVersions() {
 
         } else {
             receipt = {
-                id: `new${countNewReceiptAdd()}`,
+                id: generateId(),
                 commentary: currentReceiptCommentary,
-                status: "WAITING_VALIDATION",
+                status: WAITING_SAVE,
                 url: currentLink,
             };
         }
 
         setReceiptList(prev => [...prev, receipt]);
-        setUpdateCards(prev => prev + 1);
     };
 
-    // Adiciona comprovante e atualiza estado
-    const addReceiptAndUpdateListCard = async () => {
-        await addNewReceipt();
-        cancelUploadReceipt();
-        if (buttUpdate.current) buttUpdate.current.disabled = false;
-    };
+    // gerar ID para novos comprovantes
+    const generateId = () => {
+        setCountId(prev => (prev + 1));
+        return `new${countId}`;
+    }
 
-    // Atualiza o currículo com dados e comprovantes novos
-    const updateCurriculum = async () => {
-        try {
-            await this.saveNewReceiptsAndSetId();
-
-            await this.service.update({
-                id: this.state.id,
-                ownerId: this.state.ownerId,
-                lastModification: this.state.lastModification,
-                description: this.state.description,
-                entryCount: this.state.entryCount,
-                entryList: this.state.entryList,
-                version: this.state.version,
-            });
-
-            showSuccessMessage('Alterações salvas com sucesso! Atualizando página!');
-            this.setState({ countNewReceipts: 0, haveAllOriginalReceipts: true });
-            window.location.reload();
-
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // Salva os comprovantes novos (arquivos ou links) e atualiza seus ids
-    const saveNewReceiptsAndSetId = async () => {
-        for (const entry of entryList) {
-            for (const receipt of entry.receipts) {
-                if (`${receipt.id}`.includes("new")) {
-                    let idRec;
-
-                    if (receipt.url === null) {
-                        idRec = await sendFileToUserFolder(receipt);
-                    } else {
-                        idRec = await receiptWithUrlService.create(receipt).then(response => response.data);
-                    }
-                    receipt.id = idRec;
-                }
-            }
-        }
-    };
-
-    // Envia arquivo físico para o servidor e retorna id
-    const sendFileToUserFolder = async (receipt) => {
-        const fileToSend = newReceiptsFiles.find(file => file.id === receipt.id);
-
-        const data = new FormData();
-        data.append('file', fileToSend);
-        data.append('userId', ownerId);
-        data.append('userCommentary', receipt.commentary);
-
-        return fileUploadService.create(data)
-            .then(response => response.data)
-            .catch(error => {
-                console.error(error);
-            });
-    };
-
-    // Cancela o popup de adicionar link
-    const cancelLinkAuth = () => {
+    // Fecha o popup
+    const closePopups = () => {
+        // link
         setRenderPopupInformUrl(false);
         setCurrentLink("");
         setCurrentReceiptCommentary("");
+        // físico
+        setRenderPopupImportReceipt(false);
+        setCurrentReceiptFile(null);
+        setCurrentReceiptFileName("***");
+        setCurrentReceiptCommentary("");
     };
 
-    // Adiciona comprovante via link
-    const addLinkReceipt = async () => {
-        await addNewReceipt();
-        cancelLinkAuth();
-    };
+    // Remove comprovante da lista
+    const deleteReceipOfList = async (id, isFisicalFile) => {
 
-    // Cancela salvar nova versão
-    const cancelSaveNewVersion = () => {
-        setRenderPopupCommentaryVersion(false);
-        setCommentaryToNewVersion("");
-    };
-
-    // Salva nova versão do currículo
-    const saveNewVersion = async () => {
-        if (countNewReceipts > 0) {
-            await removeIdOfNewReceips();
-        }
-
-        let idNewVersion = "";
-
-        await service.create({
-            id: curriculumId,
-            ownerId,
-            lastModification,
-            description: commentaryToNewVersion,
-            entryCount,
-            entryList,
-            version,
-        }).then(response => {
-            idNewVersion = response.data.id;
-            if (newReceiptsFiles.length > 0) {
-                onlySendNewFiles(response.data.entryList);
-            }
-        });
-
-        showSuccessMessage("Nova versão salva com sucesso! Atualizando página para edição da nova versão!");
-        setCountNewReceipts(0);
-        setHaveAllOriginalReceipts(true);
-        navigate(`/updateversions/${idNewVersion}`);
-        window.location.reload();
-    };
-
-    // Remove ids dos comprovantes novos para salvar como novos
-    const removeIdOfNewReceips = async () => {
-        entryList.forEach(entry => {
-            entry.receipts.forEach(rec => {
-                if (`${rec.id}`.includes("new")) {
-                    rec.id = null;
-                }
-            });
-        });
+        setReceiptList(prev => prev.filter(rec => rec.id !== id));
     };
 
     // Envia apenas os arquivos novos após criar nova versão
@@ -384,7 +266,7 @@ export default function UpdateVersions() {
                     if (rec.lastModified === file.lastModified && `${rec.name}${rec.extension}` === file.name) {
                         const data = new FormData();
                         data.append('file', file);
-                        data.append('userId', ownerId);
+                        data.append('userId', curriculum.ownerId);
                         data.append('userCommentary', 'not used, but @valid stop the request whithout this');
                         data.append('nameOnDB', rec.id + rec.extension);
 
@@ -399,6 +281,14 @@ export default function UpdateVersions() {
         }
     };
 
+    // Atualiza arquivo atual para upload
+    const setCurrentFile = (file) => {
+        if (file != null) {
+            setCurrentReceiptFileName(file.name);
+            setCurrentReceiptFile(file);
+        }
+    };
+
     return (
         <div className='F-update'>
 
@@ -410,13 +300,13 @@ export default function UpdateVersions() {
 
                 <div className='First-Line'>
                     <div className='Name-and-entries'>
-                        <h2 id='nameCurriculumOwner'>{ownerName}</h2>
-                        <h4 id='countEntry'>Competências identificadas: {entryCount}</h4>
+                        <h2 id='nameCurriculumOwner'>{curriculum.ownerName}</h2>
+                        <h4 id='countEntry'>Competências identificadas: {curriculum.entryCount}</h4>
                         <br />
                     </div>
                     <div className='Version-and-comment'>
-                        <h2 id='versionCurriculum'>{version}</h2>
-                        <h4 id='descriptionCurriculum'>{description}</h4>
+                        <h2 id='versionCurriculum'>{curriculum.version}</h2>
+                        <h4 id='descriptionCurriculum'>{curriculum.description}</h4>
                     </div>
                 </div>
 
@@ -430,7 +320,7 @@ export default function UpdateVersions() {
                             size="lg"
                             className="Bt-space-between"
                             title='listagem de versões'
-                        ><img id="ico-comeBack" className="Button-ComeBack Bt-size1-updateC" border="0" src={img7} alt="Voltar" />
+                        ><img id="ico-comeBack" className="Button-ComeBack Bt-size1-updateC" border="0" src={imgComeBack} />
                         </Button>
 
                         <Button
@@ -438,10 +328,11 @@ export default function UpdateVersions() {
                             color="primary"
                             size="lg"
                             className="Bt-space-between"
-                            const onClick={updateCurriculum}
+                            onClick={updateCurriculum}
                             innerRef={el => (buttUpdate.current = el)}
-                            title='salvar versão atual'
-                        ><img className="Button-Save Bt-size1-updateC Current-version" border="0" src={img12} alt="Salvar" />
+                            title='atualizar versão'
+                            disabled={countNewReceipts === 0}
+                        ><img className="Button-Save Bt-size1-updateC Current-version" border="0" src={imgSave} />
                         </Button>
 
                         <Button
@@ -451,7 +342,7 @@ export default function UpdateVersions() {
                             className="Save Save-new-version"
                             onClick={() => setRenderPopupCommentaryVersion(true)}
                             title='salvar nova versão'
-                        ><img className="Button-Save Bt-size1-updateC New-version" border="0" src={img13} alt="Nova Versão" />
+                        ><img className="Button-Save Bt-size1-updateC New-version" border="0" src={imgNewVersion} alt="Nova Versão" />
                         </Button>
                     </div>
 
@@ -480,7 +371,8 @@ export default function UpdateVersions() {
                     <div className="Box-Experiences">
                         <h2>Competências por grupo</h2>
                         <br />
-                        <EntriesMap entries={entryList} loadReceipts={showReceipts} />
+                        {/* Competências identificadas */}
+                        <EntriesMap entries={curriculum.entryList} loadReceipts={showReceipts} />
                     </div>
 
                     <div className='Entry-Receipts'>
@@ -488,8 +380,8 @@ export default function UpdateVersions() {
                             update={updateCards}
                             receipts={receiptList}
                             deleteMethod={deleteReceipOfList}
-                            iconWaiting={img9}
-                            iconChecked={img10}
+                            iconWaiting={imgWaitingSave}
+                            iconChecked={imgReceiptSent}
                             iconInvalid={img11}
                             iconReciclebin={img14}
                         />
@@ -516,7 +408,7 @@ export default function UpdateVersions() {
                             className="Bt-import-Receipt"
                             onClick={() => fileInputRef.current && fileInputRef.current.click()}
                         >
-                            <img className="Icon" border="0" src={iconUpReceipt} alt="Enviar arquivo" />
+                            <img className="Icon" border="0" src={imgIconUpReceipt} alt="Enviar arquivo" />
                             <b>ENVIAR</b>
                         </Button>
                     </div>
@@ -535,11 +427,11 @@ export default function UpdateVersions() {
                             color="primary"
                             size="lg"
                             disabled={currentReceiptFileName === "***"}
-                            onClick={addReceiptAndUpdateListCard}
-                        >
-                            <b>ADICIONAR COMP</b>
+                            onClick={addReceipt}
+                        ><b>ADICIONAR COMP</b>
                         </Button>
-                        <Button id='buttonCancelSendFisicalReceipt' color="danger" size="lg" onClick={cancelUploadReceipt}>
+
+                        <Button id='buttonCancelSendFisicalReceipt' color="danger" size="lg" onClick={closePopups}>
                             <b>CANCELAR</b>
                         </Button>
                     </div>
@@ -566,17 +458,11 @@ export default function UpdateVersions() {
                     </div>
 
                     <div className='Buttons-link'>
-                        <Button
-                            id='buttonAddReceiptLink'
-                            color="primary"
-                            size="lg"
-                            disabled={currentLink === ""}
-                            onClick={addLinkReceipt}
-                        >
+                        <Button id='btn-add-receipt-link' color="primary" size="lg" disabled={currentLink === ""} onClick={addReceipt}>
                             <b>ADICIONAR COMP</b>
                         </Button>
 
-                        <Button id='buttonCancelAddReceiptLink' color="danger" size="lg" onClick={cancelLinkAuth}>
+                        <Button id='btn-cancel-receipt-link' color="danger" size="lg" onClick={closePopups}>
                             <b>CANCELAR</b>
                         </Button>
                     </div>
@@ -615,12 +501,16 @@ export default function UpdateVersions() {
 
                 <div className='Bottom-icons'>
                     <div className='Icons-flex'>
-                        <img id="ico-WithoutProof" className="Button-WithoutProof" border="0" src={img8} width="40" height="40" alt="Sem Comprovante" />
-                        <h6>Sem Comprovante</h6>
+                        <img src={imgWithoutRceipt} />
+                        <h6>Sem comprovante</h6>
                     </div>
                     <div className='Icons-flex'>
-                        <img id="ico-Proven" className="Button-Proven" border="0" src={img10} width="40" height="40" alt="Comprovado por Validador" />
-                        <h6>Comprovante Enviado</h6>
+                        <img src={imgReceiptSent} />
+                        <h6>Comprovante enviado</h6>
+                    </div>
+                    <div className='Icons-flex'>
+                        <img src={imgWaitingSave} />
+                        <h6>Aguardando ser salvo</h6>
                     </div>
                 </div>
             </div>

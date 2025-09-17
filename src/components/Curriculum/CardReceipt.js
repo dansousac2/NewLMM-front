@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Button } from "reactstrap";
 import './CardReceipt.css';
 
-import iconInvalid from '../../assets/images/Invalidated.svg';
 import iconChecked from '../../assets/images/Proven.svg';
 import iconRecyclebin from '../../assets/images/recyclebinEmpty.svg';
 import iconWaiting from '../../assets/images/Waiting.svg';
@@ -12,8 +11,9 @@ import { createLinkToRead } from "../../services/ServerService";
 
 const authService = AuthenticationApiService;
 
-//TODO realizar import de ícones usados ao invés de trazê-los via props
-function CardReceipt(props) {
+export const WAITING_SAVE = 'WAITING';
+
+export default function CardReceipt(props) {
 
     const [receipts, setReceipts] = useState([]);
 
@@ -25,19 +25,10 @@ function CardReceipt(props) {
 
                 var icon = "";
 
-                switch (rec.status) {
-
-                    case "WAITING_VALIDATION":
-                        icon = iconWaiting;
-                        break;
-
-                    case "CHECKED_BY_VALIDATOR":
-                        icon = iconChecked;
-                        break;
-
-                    case "INVALID":
-                        icon = iconInvalid;
-                        break;
+                if(rec.status === WAITING_SAVE) {
+                    icon = iconWaiting;
+                } else {
+                    icon = iconChecked;
                 }
 
                 if (rec.url == null) {
@@ -100,5 +91,4 @@ function CardReceipt(props) {
         </div>
     )
 
-}
-export default CardReceipt;
+};
