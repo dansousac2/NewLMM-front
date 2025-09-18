@@ -41,20 +41,20 @@ export default function UpdateVersions() {
     // O setState do react é assíncrono, mas só mostra o valor atualizado após nova renderização
     /* entryCount; ownerName; ownerId; description; version; entryList; lastModification */
     const [curriculum, setCurriculum] = useState({
-        entryCount: 0, 
-        ownerName: '', 
-        ownerId: 0, 
-        description: '', 
-        version: '', 
-        entryList: [], 
+        entryCount: 0,
+        ownerName: '',
+        ownerId: 0,
+        description: '',
+        version: '',
+        entryList: [],
         lastModification: ''
-    }); 
+    });
 
     const [currentEntry, setCurrentEntry] = useState(null);
     const [receiptList, setReceiptList] = useState([]);
 
     const [newReceiptsFiles, setNewReceiptsFiles] = useState([]);
-    
+
     const [renderPopupCommentaryVersion, setRenderPopupCommentaryVersion] = useState(false);
     const [commentaryToNewVersion, setCommentaryToNewVersion] = useState("");
 
@@ -63,18 +63,17 @@ export default function UpdateVersions() {
     const [renderPopupImportReceipt, setRenderPopupImportReceipt] = useState(false);
     const [renderPopupInformUrl, setRenderPopupInformUrl] = useState(false);
 
+    const [currentLink, setCurrentLink] = useState("");
     const [currentReceiptFile, setCurrentReceiptFile] = useState(null);
     const [currentReceiptFileName, setCurrentReceiptFileName] = useState("***");
     const [currentReceiptCommentary, setCurrentReceiptCommentary] = useState("");
-
-    const [currentLink, setCurrentLink] = useState("");
 
     const [countNewReceipts, setCountNewReceipts] = useState(0);
     const [haveAllOriginalReceipts, setHaveAllOriginalReceipts] = useState(true);
     const [updateCards, setUpdateCards] = useState(0);
 
     const [countId, setCountId] = useState(0);
-    
+
     // Refs para botões
     const buttAuthValidator = useRef(null);
     const buttAuthEletronic = useRef(null);
@@ -96,6 +95,9 @@ export default function UpdateVersions() {
             if (buttAuthEletronic.current) buttAuthEletronic.current.disabled = true;
             if (buttUpdate.current) buttUpdate.current.disabled = true;
 
+            // adiciona o evento de prevenção de navegação
+            window.addEventListener("beforeunload", handleBeforeUnload);
+
             const handleBeforeUnload = (event) => {
                 if (!haveAllOriginalReceipts) {
                     event.preventDefault();
@@ -104,9 +106,6 @@ export default function UpdateVersions() {
                 }
             };
 
-            // adiciona o evento de prevenção de navegação
-            window.addEventListener("beforeunload", handleBeforeUnload);
-            
             // Função de Limpeza do useEfect
             // remoção para prevenir vazamentos de memória
             return () => window.removeEventListener("beforeunload", handleBeforeUnload);
@@ -159,7 +158,7 @@ export default function UpdateVersions() {
     // Atualiza o currículo com dados e comprovantes novos
     const updateCurriculum = async () => {
         try {
-            setCurriculum(prev => ({...prev, lastModification: new Date()}))
+            setCurriculum(prev => ({ ...prev, lastModification: new Date() }))
             await service.update(curriculum);
             showSuccessMessage('Alterações salvas com sucesso! Atualizando página!');
             window.location.reload();
@@ -173,7 +172,7 @@ export default function UpdateVersions() {
     const saveNewVersion = async () => {
 
         // remove id e atualiza data de modificação para salvar no banco.
-        setCurriculum(prev => ({...prev, id: null, lastModification: new Date()}))
+        setCurriculum(prev => ({ ...prev, id: null, lastModification: new Date() }))
         try {
             const response = await service.create(curriculum);
             if (newReceiptsFiles.length > 0) {
@@ -200,35 +199,50 @@ export default function UpdateVersions() {
     };
 
     const addNewReceipt = async () => {
-        let receipt;
+
+        let newReceipt = {
+            id: generateId(),
+            commentary: currentReceiptCommentary,
+            status: WAITING_SAVE
+        }
 
         if (currentLink === "") {
             const nameFile = currentReceiptFile.name;
             const indexDot = nameFile.indexOf(".");
 
-            receipt = {
-                id: generateId(),
-                name: nameFile.substring(0, indexDot),
-                extension: nameFile.substring(indexDot),
-                commentary: currentReceiptCommentary,
-                status: WAITING_SAVE,
-                url: null,
-                lastModified: `${currentReceiptFile.lastModified}`,
-            };
+            newReceipt.name = nameFile.substring(0, indexDot);
+            newReceipt.extension = nameFile.substring(indexDot);
 
-            currentReceiptFile.id = receipt.id;
+            currentReceiptFile.id = newReceipt.id;
             setNewReceiptsFiles(prev => [...prev, currentReceiptFile]);
 
         } else {
-            receipt = {
-                id: generateId(),
-                commentary: currentReceiptCommentary,
-                status: WAITING_SAVE,
-                url: currentLink,
-            };
+            newReceipt.url = currentLink
         }
 
-        setReceiptList(prev => [...prev, receipt]);
+
+        // adiciona na lista de comprovantes do currículo original
+        setCurriculum(prev => ({...prev,
+            entryList: prev.entryList.map(entry => {
+                if(entry.id == currentEntry.id) {
+
+                    // cria nova lista visualização de comprovantes
+                    const newRecList = [...entry.receipts, newReceipt];
+
+                    // mostra lista ao usuário usando área destinada aos comprovantes da comp. destacada
+                    setReceiptList(newRecList);
+
+                    // retorna com 1 comprovante a mais
+                    return {
+                        ...entry,
+                        receipts: newRecList
+                    };
+                } else {
+                    // retorna original
+                    return entry;
+                }
+            })
+        }));
     };
 
     // gerar ID para novos comprovantes
