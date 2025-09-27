@@ -94,25 +94,27 @@ export default function UpdateVersions() {
             if (buttAuthValidator.current) buttAuthValidator.current.disabled = true;
             if (buttAuthEletronic.current) buttAuthEletronic.current.disabled = true;
             if (buttUpdate.current) buttUpdate.current.disabled = true;
-
-            // adiciona o evento de prevenção de navegação
-            window.addEventListener("beforeunload", handleBeforeUnload);
-
-            const handleBeforeUnload = (event) => {
-                if (!haveAllOriginalReceipts) {
-                    event.preventDefault();
-                    event.returnValue = "";
-                    return "";
-                }
-            };
-
-            // Função de Limpeza do useEfect
-            // remoção para prevenir vazamentos de memória
-            return () => window.removeEventListener("beforeunload", handleBeforeUnload);
         }
-
         findById()
     }, [idParam]);
+
+    // função para uso no impedir fechar, atualizar navegação
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (!haveAllOriginalReceipts) {
+                event.preventDefault();
+                event.returnValue = "";
+                return "";
+            }
+        };
+
+        // adiciona o evento de prevenção de navegação
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        // Função de Limpeza do useEfect
+        // remoção para prevenir vazamentos de memória
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [haveAllOriginalReceipts]);
 
     // Verifica quantidade de comprovantes e habilita/desabilita botões
     useEffect(() => {
@@ -196,6 +198,7 @@ export default function UpdateVersions() {
     const addReceipt = async () => {
         await addNewReceipt();
         closePopups();
+        setHaveAllOriginalReceipts(false);
     };
 
     const addNewReceipt = async () => {
@@ -222,9 +225,10 @@ export default function UpdateVersions() {
 
 
         // adiciona na lista de comprovantes do currículo original
-        setCurriculum(prev => ({...prev,
+        setCurriculum(prev => ({
+            ...prev,
             entryList: prev.entryList.map(entry => {
-                if(entry.id == currentEntry.id) {
+                if (entry.id == currentEntry.id) {
 
                     // cria nova lista visualização de comprovantes
                     const newRecList = [...entry.receipts, newReceipt];
@@ -267,16 +271,17 @@ export default function UpdateVersions() {
     // Remove comprovante da lista
     const deleteReceipOfList = async (id, isFisicalFile) => {
 
-        setCurriculum(prev => ({...prev,
+        setCurriculum(prev => ({
+            ...prev,
             // lista de competências
             entryList: prev.entryList.map(entry => {
-                if(entry.id == currentEntry.id) {
+                if (entry.id == currentEntry.id) {
                     // retornar todos os dados da entrada + lista de comprovantes atualizada
                     const receiptsListAfterRemove = entry.receipts.filter(rec => rec.id !== id);
 
                     // seta para visualização em tela
                     setReceiptList(receiptsListAfterRemove);
-                    
+
                     // retorna cópia de objeto para melhor prática usando react
                     return ({
                         ...entry,
