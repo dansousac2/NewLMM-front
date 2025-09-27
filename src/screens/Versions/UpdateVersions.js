@@ -116,7 +116,7 @@ export default function UpdateVersions() {
 
     // Verifica quantidade de comprovantes e habilita/desabilita botões
     useEffect(() => {
-        // Ao carregar a página não entrada/competência selecionada, logo não analisa comprovantes
+        // Ao carregar a página não há entrada/competência selecionada, logo não analisa comprovantes
         if (currentEntry) {
 
             const numbReceipts = receiptList.length;
@@ -267,7 +267,26 @@ export default function UpdateVersions() {
     // Remove comprovante da lista
     const deleteReceipOfList = async (id, isFisicalFile) => {
 
-        setReceiptList(prev => prev.filter(rec => rec.id !== id));
+        setCurriculum(prev => ({...prev,
+            // lista de competências
+            entryList: prev.entryList.map(entry => {
+                if(entry.id == currentEntry.id) {
+                    // retornar todos os dados da entrada + lista de comprovantes atualizada
+                    const receiptsListAfterRemove = entry.receipts.filter(rec => rec.id !== id);
+
+                    // seta para visualização em tela
+                    setReceiptList(receiptsListAfterRemove);
+                    
+                    // retorna cópia de objeto para melhor prática usando react
+                    return ({
+                        ...entry,
+                        receipts: receiptsListAfterRemove
+                    })
+                } else {
+                    return entry;
+                }
+            })
+        }));
     };
 
     // Envia apenas os arquivos novos após criar nova versão
@@ -394,10 +413,6 @@ export default function UpdateVersions() {
                             update={updateCards}
                             receipts={receiptList}
                             deleteMethod={deleteReceipOfList}
-                            iconWaiting={imgWaitingSave}
-                            iconChecked={imgReceiptSent}
-                            iconInvalid={img11}
-                            iconReciclebin={img14}
                         />
                     </div>
                 </div>
