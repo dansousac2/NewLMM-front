@@ -68,7 +68,7 @@ export default function UpdateVersions() {
     const [currentReceiptFileName, setCurrentReceiptFileName] = useState("***");
     const [currentReceiptCommentary, setCurrentReceiptCommentary] = useState("");
 
-    const [countNewReceipts, setCountNewReceipts] = useState(0);
+    const [anyOriginalRemoved, setAnyOriginalRemoved] = useState(false);
     const [haveAllOriginalReceipts, setHaveAllOriginalReceipts] = useState(true);
     const [updateCards, setUpdateCards] = useState(0);
 
@@ -114,6 +114,7 @@ export default function UpdateVersions() {
         // Função de Limpeza do useEfect
         // remoção para prevenir vazamentos de memória
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+
     }, [haveAllOriginalReceipts]);
 
     // Verifica quantidade de comprovantes e habilita/desabilita botões
@@ -271,10 +272,22 @@ export default function UpdateVersions() {
     // Remove comprovante da lista
     const deleteReceipOfList = async (id, isFisicalFile) => {
 
+        let countNewReceipts = 0;
+
         setCurriculum(prev => ({
             ...prev,
+
             // lista de competências
             entryList: prev.entryList.map(entry => {
+
+                // se forem removidos comprovantes novos, verifica quantidade
+                if(id.includes('new')) {
+                    entry.receipts.forEach(rec => {
+                        if(rec.id.includes('new')) countNewReceipts++;
+                    });
+                    
+                }
+
                 if (entry.id == currentEntry.id) {
                     // retornar todos os dados da entrada + lista de comprovantes atualizada
                     const receiptsListAfterRemove = entry.receipts.filter(rec => rec.id !== id);
@@ -292,6 +305,16 @@ export default function UpdateVersions() {
                 }
             })
         }));
+
+        if (id.includes('new')) {
+            // removido comprovante recém adicionado
+            // se o removido era o único novo e nenhum original foi removido, então restaram apenas os originais
+            setHaveAllOriginalReceipts(countNewReceipts === 1 && !anyOriginalRemoved);
+        } else {
+            // removido comprovante persistido no banco
+            setAnyOriginalRemoved(true);
+            setHaveAllOriginalReceipts(false);
+        }
     };
 
     // Envia apenas os arquivos novos após criar nova versão
@@ -369,7 +392,7 @@ export default function UpdateVersions() {
                             onClick={updateCurriculum}
                             innerRef={el => (buttUpdate.current = el)}
                             title='atualizar versão'
-                            disabled={countNewReceipts === 0}
+                            disabled={haveAllOriginalReceipts}
                         ><img className="Button-Save Bt-size1-updateC Current-version" border="0" src={imgSave} />
                         </Button>
 
