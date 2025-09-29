@@ -61,7 +61,6 @@ export default function UpdateVersions() {
 
     const [currentLink, setCurrentLink] = useState("");
     const [currentReceiptFile, setCurrentReceiptFile] = useState(null);
-    const [currentReceiptFileName, setCurrentReceiptFileName] = useState("***");
     const [currentReceiptCommentary, setCurrentReceiptCommentary] = useState("");
 
     const [anyOriginalRemoved, setAnyOriginalRemoved] = useState(false);
@@ -223,6 +222,8 @@ export default function UpdateVersions() {
         }
 
         if (currentLink === "") {
+            // se comprovante físico
+
             const nameFile = currentReceiptFile.name;
             const indexDot = nameFile.indexOf(".");
 
@@ -277,7 +278,6 @@ export default function UpdateVersions() {
         // físico
         setRenderPopupImportReceipt(false);
         setCurrentReceiptFile(null);
-        setCurrentReceiptFileName("***");
         setCurrentReceiptCommentary("");
     };
 
@@ -322,11 +322,17 @@ export default function UpdateVersions() {
             // removido comprovante recém adicionado
             // se o removido era o único novo e nenhum original foi removido, então restaram apenas os originais
             setHaveAllOriginalReceipts(countNewReceipts === 1 && !anyOriginalRemoved);
+            
+            if(isFisicalFile) {
+                // se arquivo físico
+                setNewReceiptsFiles(prev => prev.filter(file => file.id !== id));
+            }
         } else {
             // removido comprovante persistido no banco
             setAnyOriginalRemoved(true);
             setHaveAllOriginalReceipts(false);
         }
+
     };
 
     // Envia apenas os arquivos novos após criar nova versão
@@ -357,7 +363,6 @@ export default function UpdateVersions() {
     // Atualiza arquivo atual para upload
     const setCurrentFile = (file) => {
         if (file != null) {
-            setCurrentReceiptFileName(file.name);
             setCurrentReceiptFile(file);
         }
     };
@@ -462,7 +467,7 @@ export default function UpdateVersions() {
                     <h2 className='Center'>Upload de Arquivo</h2>
                     <div className='In-line'>
                         <h3>Arquivo:</h3>
-                        <input type='text' disabled={true} className='Input-arquive' placeholder={currentReceiptFileName} />
+                        <input type='text' disabled={true} className='Input-arquive' placeholder={currentReceiptFile ? currentReceiptFile.name : '***'} />
                         <input
                             type='file'
                             accept='.jpeg, .jpg, .png, .pdf'
@@ -476,9 +481,7 @@ export default function UpdateVersions() {
                             size="sm"
                             className="Bt-import-Receipt"
                             onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                        >
-                            <img className="Icon" border="0" src={imgIconUpReceipt} alt="Enviar arquivo" />
-                            <b>ENVIAR</b>
+                        ><img className="Icon" border="0" src={imgIconUpReceipt} alt="Enviar arquivo" /><b>ENVIAR</b>
                         </Button>
                     </div>
                     <div className='In-line'>
@@ -495,7 +498,7 @@ export default function UpdateVersions() {
                             id='buttonAddFisicalReceipt'
                             color="primary"
                             size="lg"
-                            disabled={currentReceiptFileName === "***"}
+                            disabled={currentReceiptFile == null}
                             onClick={addReceipt}
                         ><b>ADICIONAR COMP</b>
                         </Button>
@@ -579,7 +582,7 @@ export default function UpdateVersions() {
                     </div>
                     <div className='Icons-flex'>
                         <img src={imgWaitingSave} />
-                        <h6>Aguardando ser salvo</h6>
+                        <h6>Aguardando para salvar</h6>
                     </div>
                 </div>
             </div>
