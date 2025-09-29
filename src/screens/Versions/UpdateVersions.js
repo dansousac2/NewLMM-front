@@ -7,24 +7,20 @@ import VersionService from '../../services/VersionsService';
 import './UpdateVersions.css';
 
 import imgComeBack from '../../assets/images/ComeBack.svg';
-import img11 from '../../assets/images/Invalidated.svg';
 import imgReceiptSent from '../../assets/images/Proven.svg';
 import imgSave from '../../assets/images/Save.svg';
 import imgWaitingSave from '../../assets/images/Waiting.svg';
 import imgWithoutRceipt from '../../assets/images/WithoutProof.svg';
 import imgNewVersion from '../../assets/images/createNewCurriculum.svg';
-import img14 from '../../assets/images/recyclebinEmpty.svg';
 import imgIconUpReceipt from '../../assets/images/uploadReceipt.svg';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'reactstrap';
-import CardReceipt from '../../components/Curriculum/CardReceipt';
+import CardReceipt, { WAITING_SAVE } from '../../components/Curriculum/CardReceipt';
 import PopupSpace from '../../components/FormGroup/PopupSpace';
 import LeftMenu from '../../components/Menu/LeftMenu';
-import { WAITING_SAVE } from '../../components/Curriculum/CardReceipt';
 
 import { showErrorMessage, showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
-import { version } from 'toastr';
 
 // Serviços
 const service = VersionService;
@@ -98,10 +94,13 @@ export default function UpdateVersions() {
         findById()
     }, [idParam]);
 
-    // função para uso no impedir fechar, atualizar navegação
+    /*
+    * Verificação de comprovantes não salvos - Parte 02
+    */
     useEffect(() => {
         const handleBeforeUnload = (event) => {
-            if (!haveAllOriginalReceipts) {
+            if (!haveAllOriginalReceipts || anyOriginalRemoved) {
+                // se houver algum novo, ou se algum original do banco de dados foi removido
                 event.preventDefault();
                 event.returnValue = "";
                 return "";
@@ -115,7 +114,9 @@ export default function UpdateVersions() {
         // remoção para prevenir vazamentos de memória
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
 
-    }, [haveAllOriginalReceipts]);
+    }, [haveAllOriginalReceipts, anyOriginalRemoved]);
+
+
 
     // Verifica quantidade de comprovantes e habilita/desabilita botões
     useEffect(() => {
@@ -137,6 +138,17 @@ export default function UpdateVersions() {
             };
         }
     }, [receiptList]);
+
+    // alerta de navegador
+    const handleBack = () => {
+        if (!haveAllOriginalReceipts || anyOriginalRemoved) {
+            if (window.confirm('Você enviou novos comprovantes que ainda não foram salvos. \nDeseja mesmo sair?')) {
+                navigate('/versionlisting');
+            }
+        } else {
+            navigate('/versionlisting');
+        }
+    }
 
     // Mostrar comprovantes e manipulação botões
     // realiza alterações apenas se a competência já não estiver selecionada
@@ -281,11 +293,11 @@ export default function UpdateVersions() {
             entryList: prev.entryList.map(entry => {
 
                 // se forem removidos comprovantes novos, verifica quantidade
-                if(id.includes('new')) {
+                if (id.includes('new')) {
                     entry.receipts.forEach(rec => {
-                        if(rec.id.includes('new')) countNewReceipts++;
+                        if (rec.id.includes('new')) countNewReceipts++;
                     });
-                    
+
                 }
 
                 if (entry.id == currentEntry.id) {
@@ -376,7 +388,7 @@ export default function UpdateVersions() {
                     <div className='Save-return-buttons'>
                         <Button
                             id='buttonComeBack'
-                            onClick={() => navigate("/versionlisting")}
+                            onClick={handleBack}
                             color="primary"
                             size="lg"
                             className="Bt-space-between"
