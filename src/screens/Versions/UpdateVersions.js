@@ -172,8 +172,18 @@ export default function UpdateVersions() {
     // Atualiza o currículo com dados e comprovantes novos
     const updateCurriculum = async () => {
         try {
-            setCurriculum(prev => ({ ...prev, lastModification: new Date() }))
-            await service.update(curriculum);
+
+            const savedCurriculum = (await service.update(getCurriculumToSave())).data;
+
+            //TODO remover?
+            /*
+            // envio de novos arquivos
+            if (newReceiptsFiles.length !== 0) {
+                // se houverem novos comprovantes físicos para envio
+                await onlySendNewFiles(savedCurriculum.entryList);
+            }
+            */
+
             showSuccessMessage('Alterações salvas com sucesso! Atualizando página!');
             window.location.reload();
         } catch (error) {
@@ -182,11 +192,26 @@ export default function UpdateVersions() {
         }
     };
 
+    function getCurriculumToSave() {
+        // remover ids dos comprovantes para persistência (precisa ser cópia de currúculo manuseado)
+        const curriculumToUp = structuredClone(curriculum);
+        curriculumToUp.entryList.forEach(e => {
+            if (e.receipts.length !== 0) {
+                e.receipts.forEach(rec => {
+                    if (rec.id.includes('new')) {
+                        rec.id = null;
+                    }
+                })
+            }
+        })
+        return curriculumToUp;
+    }
+
     // Salva nova versão do currículo
     const saveNewVersion = async () => {
 
         // remove id e atualiza data de modificação para salvar no banco.
-        setCurriculum(prev => ({ ...prev, id: null, lastModification: new Date() }))
+        setCurriculum(prev => ({ ...prev, id: null, lastModification: new Date() }));
         try {
             const response = await service.create(curriculum);
             if (newReceiptsFiles.length > 0) {
@@ -266,7 +291,8 @@ export default function UpdateVersions() {
     // gerar ID para novos comprovantes
     const generateId = () => {
         setCountId(prev => (prev + 1));
-        return `new${countId}`;
+        // novos comprovantes possuem ID terminando com ID da entrada/competência
+        return `new${countId}-${currentEntry.id}`;
     }
 
     // Fecha o popup
@@ -274,10 +300,10 @@ export default function UpdateVersions() {
         // link
         setRenderPopupInformUrl(false);
         setCurrentLink("");
-        setCurrentReceiptCommentary("");
         // físico
         setRenderPopupImportReceipt(false);
         setCurrentReceiptFile(null);
+
         setCurrentReceiptCommentary("");
     };
 
@@ -322,8 +348,8 @@ export default function UpdateVersions() {
             // removido comprovante recém adicionado
             // se o removido era o único novo e nenhum original foi removido, então restaram apenas os originais
             setHaveAllOriginalReceipts(countNewReceipts === 1 && !anyOriginalRemoved);
-            
-            if(isFisicalFile) {
+
+            if (isFisicalFile) {
                 // se arquivo físico
                 setNewReceiptsFiles(prev => prev.filter(file => file.id !== id));
             }
@@ -338,15 +364,16 @@ export default function UpdateVersions() {
     // Envia apenas os arquivos novos após criar nova versão
     const onlySendNewFiles = async (entryListSaved) => {
         for (const file of newReceiptsFiles) {
+
             let wasFinded = false;
 
+            //TODO rever lógica de laço
             for (const entry of entryListSaved) {
                 for (const rec of entry.receipts) {
                     if (rec.lastModified === file.lastModified && `${rec.name}${rec.extension}` === file.name) {
                         const data = new FormData();
                         data.append('file', file);
                         data.append('userId', curriculum.ownerId);
-                        data.append('userCommentary', 'not used, but @valid stop the request whithout this');
                         data.append('nameOnDB', rec.id + rec.extension);
 
                         await onlyFileUpload.create(data);

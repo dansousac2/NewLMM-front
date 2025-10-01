@@ -39,8 +39,8 @@ export const createApiService = (endpoint) => {
         },
         postWithHeaders: (params) => httpClient.post(endpoint, params, {
             headers: {
-                'Content-type': 'multipart/form-data',
-            },
+                'Content-type': 'multipart/form-data'
+            }
         }),
     };
 };
