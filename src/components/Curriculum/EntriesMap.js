@@ -22,7 +22,7 @@ function EntriesMap({ entries, loadReceipts }) {
             return (
                 <img className="Icons" src={iconWithout} />
             )
-        } else if (receipts.some(rec => rec.id.includes('new') )) {
+        } else if (receipts.some(rec => String(rec.id).includes('new') )) {
             return (
                 <img className="Icons" src={iconWaiting} />
             )

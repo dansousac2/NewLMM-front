@@ -12,8 +12,12 @@ const createStorageService = () => ({
 
     getItem: (key) => {
         const item = localStorage.getItem(key);
-        // tenta fazer parse apenas se for JSON válido
+        if(item === 'undefined') {
+            // se string com valor "undefined"
+            return null;
+        }
         try {
+            // se item for string válida de JSON
             return JSON.parse(item);
         } catch {
             // retorna como string pura

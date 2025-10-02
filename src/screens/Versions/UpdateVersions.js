@@ -70,9 +70,9 @@ export default function UpdateVersions() {
     const [countId, setCountId] = useState(0);
 
     // Refs para botões
-    const buttAuthValidator = useRef(null);
-    const buttAuthEletronic = useRef(null);
-    const buttUpdate = useRef(null);
+    const btnFisicalReceipt = useRef(null);
+    const btnLinkReceipt = useRef(null);
+    const btnUpdate = useRef(null);
     // Ref para que botão chame componente de input de arquivo
     const fileInputRef = useRef(null);
 
@@ -86,9 +86,9 @@ export default function UpdateVersions() {
                 console.error(error);
             }
 
-            if (buttAuthValidator.current) buttAuthValidator.current.disabled = true;
-            if (buttAuthEletronic.current) buttAuthEletronic.current.disabled = true;
-            if (buttUpdate.current) buttUpdate.current.disabled = true;
+            if (btnFisicalReceipt.current) btnFisicalReceipt.current.disabled = true;
+            if (btnLinkReceipt.current) btnLinkReceipt.current.disabled = true;
+            if (btnUpdate.current) btnUpdate.current.disabled = true;
         }
         findById()
     }, [idParam]);
@@ -124,15 +124,17 @@ export default function UpdateVersions() {
 
             const numbReceipts = receiptList.length;
 
-            if (buttAuthValidator.current && buttAuthEletronic.current) {
-                if (numbReceipts === 5) {
+            if (btnFisicalReceipt.current && btnLinkReceipt.current) {
+                if(numbReceipts < 5) {
+                    btnFisicalReceipt.current.disabled = false;
+                    btnLinkReceipt.current.disabled = false;
+                    if(numbReceipts === 0) {
+                        showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
+                    }
+                } else {
                     // máximo de 5 comprovantes
-                    buttAuthValidator.current.disabled = true;
-                    buttAuthEletronic.current.disabled = true;
-                } else if (numbReceipts === 0) {
-                    buttAuthValidator.current.disabled = false;
-                    buttAuthEletronic.current.disabled = false;
-                    showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
+                    btnFisicalReceipt.current.disabled = true;
+                    btnLinkReceipt.current.disabled = true;
                 }
             };
         }
@@ -180,7 +182,7 @@ export default function UpdateVersions() {
                 let count = 1;
                 let newId;
                 entry.receipts.forEach(rec => {
-                    if(rec.id.includes('new')) {
+                    if(String(rec.id).includes('new')) {
                         // se novo prepara novo id tipo int
                         newId = entry.id + count++;
                         // busca nos arquivos a serem enviados por correspondência
@@ -207,6 +209,10 @@ export default function UpdateVersions() {
             );
             
             const savedCurriculum = (await service.update(data)).data;
+
+            //TODO rever lógica
+            // atualizar currículo usado na exibição
+            // voltar valores default da página de update
             
             showSuccessMessage('Alterações salvas com sucesso! Atualizando página!');
             window.location.reload();
@@ -327,11 +333,10 @@ export default function UpdateVersions() {
 
             // lista de competências
             entryList: prev.entryList.map(entry => {
-
                 // se forem removidos comprovantes novos, verifica quantidade
-                if (id.includes('new')) {
+                if (String(id).includes('new')) {
                     entry.receipts.forEach(rec => {
-                        if (rec.id.includes('new')) countNewReceipts++;
+                        if (String(rec.id).includes('new')) countNewReceipts++;
                     });
 
                 }
@@ -354,7 +359,7 @@ export default function UpdateVersions() {
             })
         }));
 
-        if (id.includes('new')) {
+        if (String(id).includes('new')) {
             // removido comprovante recém adicionado
             // se o removido era o único novo e nenhum original foi removido, então restaram apenas os originais
             setHaveAllOriginalReceipts(countNewReceipts === 1 && !anyOriginalRemoved);
@@ -444,7 +449,7 @@ export default function UpdateVersions() {
                             size="lg"
                             className="Bt-space-between"
                             onClick={updateCurriculum}
-                            innerRef={el => (buttUpdate.current = el)}
+                            innerRef={el => (btnUpdate.current = el)}
                             title='atualizar versão'
                             disabled={haveAllOriginalReceipts}
                         ><img className="Button-Save Bt-size1-updateC Current-version" border="0" src={imgSave} />
@@ -467,7 +472,7 @@ export default function UpdateVersions() {
                             color="primary"
                             size="lg"
                             className="Validator-authentication"
-                            innerRef={el => (buttAuthValidator.current = el)}
+                            innerRef={el => (btnFisicalReceipt.current = el)}
                             onClick={() => setRenderPopupImportReceipt(true)}
                         > (+) COMPROVANTE FÍSICO </Button>
                         <Button
@@ -475,7 +480,7 @@ export default function UpdateVersions() {
                             color="primary"
                             size="lg"
                             className="Electronic-authentication"
-                            innerRef={el => (buttAuthEletronic.current = el)}
+                            innerRef={el => (btnLinkReceipt.current = el)}
                             onClick={() => setRenderPopupInformUrl(true)}
                         > (+) COMPROVANTE VIA LINK </Button>
                     </div>
