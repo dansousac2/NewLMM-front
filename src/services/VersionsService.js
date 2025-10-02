@@ -9,7 +9,7 @@ const VersionService = {
     },
 
     update: async (object) => {
-        return api.put('/update', object);
+        return api.putWithFiles('/update', object);
     },
 
     delete: async (id) => {

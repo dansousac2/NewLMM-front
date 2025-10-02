@@ -173,17 +173,41 @@ export default function UpdateVersions() {
     const updateCurriculum = async () => {
         try {
 
-            const savedCurriculum = (await service.update(getCurriculumToSave())).data;
+            // DTO
+            const curriculumToSend = structuredClone(curriculum);
+            // renovar ids de receipts e respectivos arquivos para inteiro
+            curriculumToSend.entryList.forEach(entry => {
+                let count = 1;
+                let newId;
+                entry.receipts.forEach(rec => {
+                    if(rec.id.includes('new')) {
+                        // se novo prepara novo id tipo int
+                        newId = entry.id + count++;
+                        // busca nos arquivos a serem enviados por correspondência
+                        newReceiptsFiles.forEach(file => {
+                            if(file.id === rec.id) {
+                                // file recebe novo ID
+                                file.id = -(newId);
+                            }
+                        })
+                        // receipt recebe novo ID
+                        rec.id = -(newId);
+                    }
+                })
+            });
 
-            //TODO remover?
-            /*
-            // envio de novos arquivos
-            if (newReceiptsFiles.length !== 0) {
-                // se houverem novos comprovantes físicos para envio
-                await onlySendNewFiles(savedCurriculum.entryList);
-            }
-            */
-
+            const data = new FormData();
+            newReceiptsFiles.forEach(rec => {
+                data.append('files', rec.file);
+                data.append('fileIds', rec.id);
+            });
+            data.append(
+                'dto',
+                new Blob([JSON.stringify(curriculumToSend)], {type: 'application/json'})
+            );
+            
+            const savedCurriculum = (await service.update(data)).data;
+            
             showSuccessMessage('Alterações salvas com sucesso! Atualizando página!');
             window.location.reload();
         } catch (error) {
@@ -191,21 +215,6 @@ export default function UpdateVersions() {
             showErrorMessage('Ocorreu um erro ao tentar atualizar o currículo.')
         }
     };
-
-    function getCurriculumToSave() {
-        // remover ids dos comprovantes para persistência (precisa ser cópia de currúculo manuseado)
-        const curriculumToUp = structuredClone(curriculum);
-        curriculumToUp.entryList.forEach(e => {
-            if (e.receipts.length !== 0) {
-                e.receipts.forEach(rec => {
-                    if (rec.id.includes('new')) {
-                        rec.id = null;
-                    }
-                })
-            }
-        })
-        return curriculumToUp;
-    }
 
     // Salva nova versão do currículo
     const saveNewVersion = async () => {
@@ -255,9 +264,9 @@ export default function UpdateVersions() {
             newReceipt.name = nameFile.substring(0, indexDot);
             newReceipt.extension = nameFile.substring(indexDot);
 
-            currentReceiptFile.id = newReceipt.id;
-            setNewReceiptsFiles(prev => [...prev, currentReceiptFile]);
-
+            // para vincular no back com entidade receipt
+            const fileWithId = {id: newReceipt.id, file: currentReceiptFile}
+            setNewReceiptsFiles(prev => [...prev, fileWithId]);
         } else {
             newReceipt.url = currentLink
         }
@@ -290,9 +299,10 @@ export default function UpdateVersions() {
 
     // gerar ID para novos comprovantes
     const generateId = () => {
-        setCountId(prev => (prev + 1));
-        // novos comprovantes possuem ID terminando com ID da entrada/competência
-        return `new${countId}-${currentEntry.id}`;
+        // novos comprovantes possuem ID terminando com ID da entrada/competência + tamanho da lista atual
+        setCountId(countId + 1);
+        // useState leva 1 renderização para atualizar valores, por isso abaixo está somado a 1.
+        return `new${currentEntry.id}${countId + 1}`;
     }
 
     // Fecha o popup
@@ -376,7 +386,7 @@ export default function UpdateVersions() {
                         data.append('userId', curriculum.ownerId);
                         data.append('nameOnDB', rec.id + rec.extension);
 
-                        await onlyFileUpload.create(data);
+                        // await onlyFileUpload.create(data);
 
                         wasFinded = true;
                         break;
@@ -588,8 +598,7 @@ export default function UpdateVersions() {
                             size="lg"
                             disabled={commentaryToNewVersion === ""}
                             onClick={saveNewVersion}
-                        >
-                            <b>SALVAR</b>
+                        ><b>SALVAR</b>
                         </Button>
 
                         <Button id='buttonCancelSaveNewVersion' color="danger" size="lg" onClick={cancelSaveNewVersion}>
