@@ -23,10 +23,11 @@ export default function CardReceipt(props) {
 
             const receiptsToCard = await Promise.all(props.receipts.map(async rec => {
 
-                var icon = "";
-                //TODO remover
-                console.log('dados do receipt');
-                console.log(JSON.stringify(rec));
+                let icon;
+                let linkLabel;
+                let isFisicalFile = false;
+
+                let link;
 
                 if(rec.status === WAITING_SAVE) {
                     icon = iconWaiting;
@@ -35,47 +36,39 @@ export default function CardReceipt(props) {
                 }
 
                 if (rec.url == null) {
-
                     /* receipt usa comprovante físico */
 
-                    let readLink;
+                    isFisicalFile = true;
+                    linkLabel = rec.name + rec.extension;
 
                     if(!String(rec.id).includes("new")) {
                         // se comprovante persistido no banco
-                        readLink = await createLinkToRead(authService.getLoggedUser().id, rec.id, rec.extension);
+                        link = await createLinkToRead(authService.getLoggedUser().id, rec.id, rec.extension);
                         //TODO remover
-                        console.log('link retornado: ' + readLink);
+                        console.log('link retornado: ' + link);
                     }
-
-                    return (
-                        <div key={`recUni${rec.id}`} className="Receipt-unique">
-                            <img className="Icons Icon-Entry" border="0" src={icon} />
-                            <b id={`commRec${rec.id}`}> {rec.commentary == null ? "---" : rec.commentary} </b>
-                            <a href={readLink} target="_blank">{ `${rec.name}${rec.extension}` }</a>
-                            <Button id={`btRec${rec.id}`} onClick={() => { props.deleteMethod(rec.id, false) }} color="danger" size="sm" >
-                                <img className="Icons Icon-Entry" src={iconRecyclebin} />
-                            </Button>
-                        </div>
-                    )
                 } else {
-                    
                     /* receipt usa URL */
 
-                    return (
-                        <div key={`recUni${rec.id}`} className="Receipt-unique">
-                            <img className="Icons Icon-Entry" border="0" src={icon} />
-                            <b id={`commRec${rec.id}`}> {rec.commentary == null ? "---" : rec.commentary} </b>
-                            <a href={rec.url} target="_blank"> Link para comprovação eletrônica </a>
-                            <Button id={`btRec${rec.id}`} onClick={() => { props.deleteMethod(rec.id, false) }} color="danger" size="sm" >
-                                <img className="Icons Icon-Entry" src={iconRecyclebin} />
-                            </Button>
-                        </div>
-                    )
+                    linkLabel = 'Link para comprovação eletrônica';
+                    link = rec.url;
                 }
+
+                return (
+                    <div key={`recUni${rec.id}`} className="Receipt-unique">
+                        <img className="Icons Icon-Entry" border="0" src={icon} />
+                        <b id={`commRec${rec.id}`}> {rec.commentary == null ? "---" : rec.commentary} </b>
+                        <a href={link} target="_blank"> { linkLabel } </a>
+                        <Button id={`btRec${rec.id}`} onClick={() => { props.deleteMethod(rec.id, isFisicalFile) }} color="danger" size="sm" >
+                            <img className="Icons Icon-Entry" src={iconRecyclebin} />
+                        </Button>
+                    </div>
+                )
             }));
 
             setReceipts(receiptsToCard);
-        };
+
+        }
         createCard();
         // atualiza sempre que alterações forem feitas na lista de receipts passadas como propriedade
     }, [props.receipts, props.update]);
