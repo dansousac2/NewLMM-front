@@ -1,17 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./ExportPdf.css";
 
-import LeftMenu from "../../components/Menu/LeftMenu";
-import { showErrorMessage } from "../../components/Toastr/Toastr";
-import CurriculumTableRS from "../../components/SchedulingTable/CurriculumTableRS";
 import { Button } from "reactstrap";
 import LoadingComp from "../../components/Extra/LoadingComp";
+import LeftMenu from "../../components/Menu/LeftMenu";
+import CurriculumTableRS from "../../components/SchedulingTable/CurriculumTableRS";
+import { showErrorMessage } from "../../components/Toastr/Toastr";
 
-import VersionsService from "../../services/VersionsService";
 import AuthenticationApiService from "../../services/AuthenticationApiService";
 import PdfService from "../../services/PdfService";
-import { getAxcessPath } from "../../services/ServerService";
 import StorageService from "../../services/StorageService";
+import VersionsService from "../../services/VersionsService";
 
 const curriculumService = VersionsService;
 const authService = AuthenticationApiService;
@@ -65,7 +64,7 @@ export default function ExportPdf() {
                     selectedCurriculum.id,
                     authService.getLoggedUser().id
                 );
-                const newLink = getAxcessPath(response.data) + noCache();
+                const newLink = response.data + noCache();
                 setLinkPdf(newLink);
                 storage.setItem(getSelectedCurriculumKeyMap(selectedCurriculum), newLink);
             } catch (error) {

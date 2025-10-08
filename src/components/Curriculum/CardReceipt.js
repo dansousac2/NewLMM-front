@@ -42,10 +42,9 @@ export default function CardReceipt(props) {
                     linkLabel = rec.name + rec.extension;
 
                     if(!String(rec.id).includes("new")) {
-                        // se comprovante persistido no banco
-                        link = await createLinkToRead(authService.getLoggedUser().id, rec.id, rec.extension);
-                        //TODO remover
-                        console.log('link retornado: ' + link);
+                        // se comprovante persistido
+                        link = await createLinkToRead(rec.id);
+                        //TODO remover objetos URL em logout
                     }
                 } else {
                     /* receipt usa URL */

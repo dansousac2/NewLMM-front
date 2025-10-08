@@ -3,9 +3,13 @@ import StorageService from "./StorageService";
 
 export const LOGGED_USER = 'loggedUser';
 export const TOKEN = 'token';
+
 const headerContentTipeMP = {
     'Content-type': 'multipart/form-data'
-}
+};
+const responseTypeBLOB = {
+    'responseType': 'blob'
+};
 
 const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
@@ -45,6 +49,8 @@ export const createApiService = (endpoint) => {
                 'Content-type': 'multipart/form-data'
             }
         }),
-        putWithFiles: (url, params) => httpClient.put(builderUrl(url), params, { headers: headerContentTipeMP })
+        putWithFiles: (url, params) => httpClient.put(builderUrl(url), params, { headers: headerContentTipeMP }),
+        // getFile: (url, params) => httpClient.get(builderUrl(url), params, { responseTypeBLOB })
+        getFile: (url) => httpClient.get(builderUrl(url), {...responseTypeBLOB} )
     };
 };

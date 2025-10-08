@@ -28,6 +28,8 @@ const onlyFileUpload = FileUploadWithoutClassCreationService();
 const fileUploadService = FileUploadService();
 const receiptWithUrlService = ReceiptWithUrlService();
 
+const updateFilesType = '.jpeg, .jpg, .png, .pdf';
+
 export default function UpdateVersions() {
 
     const navigate = useNavigate();
@@ -512,7 +514,7 @@ export default function UpdateVersions() {
                         <input type='text' disabled={true} className='Input-arquive' placeholder={currentReceiptFile ? currentReceiptFile.name : '***'} />
                         <input
                             type='file'
-                            accept='.jpeg, .jpg, .png, .pdf'
+                            accept= {updateFilesType}
                             className='Input-hiden'
                             ref={fileInputRef}
                             onChange={e => setCurrentFile(e.target.files[0])}

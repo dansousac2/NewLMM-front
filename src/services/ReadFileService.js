@@ -4,8 +4,8 @@ const api = createApiService('/readfile');
 
 const ReadFileService = {
 
-    read: async (fileName, userId) => {
-        return api.get(`?fileName=${fileName}&userId=${userId}`);
+    read: async (recId) => {
+        return api.getFile(`?receiptId=${recId}`);
     }
 }
 
