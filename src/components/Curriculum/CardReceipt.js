@@ -44,7 +44,6 @@ export default function CardReceipt(props) {
                     if(!String(rec.id).includes("new")) {
                         // se comprovante persistido
                         link = await createLinkToRead(rec.id);
-                        //TODO remover objetos URL em logout
                     }
                 } else {
                     /* receipt usa URL */

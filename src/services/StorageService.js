@@ -2,7 +2,7 @@
 const createStorageService = () => ({
 
     setItem: (key, value) => {
-        if(typeof value === 'string') {
+        if (typeof value === 'string') {
             // evita salvar com aspas no localStorage
             localStorage.setItem(key, value);
             return;
@@ -12,7 +12,7 @@ const createStorageService = () => ({
 
     getItem: (key) => {
         const item = localStorage.getItem(key);
-        if(item === 'undefined') {
+        if (item === 'undefined') {
             // se string com valor "undefined"
             return null;
         }
@@ -30,6 +30,13 @@ const createStorageService = () => ({
     },
 
     removeAllItems: () => {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const value = localStorage.getItem(key);
+            if (typeof value === 'string' && value.startsWith('blob:')) {
+                URL.revokeObjectURL(value);
+            }
+        }
         localStorage.clear();
     }
 });
