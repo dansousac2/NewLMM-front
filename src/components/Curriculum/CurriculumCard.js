@@ -7,6 +7,14 @@ import iconEdit from '../../assets/images/editCurriculum.svg';
 
 function CurriculumCard({curriculums, className, edit, delete: onDelete}) {
 
+    if(!curriculums || curriculums.length === 0) {
+        return (
+            <div key='curriculumEmpty' className='Card-curriculum'>
+                <h1>Ainda não existem versões de currículos criadas! <br/> Inicie Importando um currículo XML!</h1>
+            </div>
+        )
+    }
+
     const cardsCurriculum = curriculums.map(curriculum => {
 
         return (

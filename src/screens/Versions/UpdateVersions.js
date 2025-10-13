@@ -37,7 +37,6 @@ export default function UpdateVersions() {
 
     // Estados
     // O setState do react é assíncrono, mas só mostra o valor atualizado após nova renderização
-    /* entryCount; ownerName; ownerId; description; version; entryList; lastModification */
     const [curriculum, setCurriculum] = useState({
         entryCount: 0,
         ownerName: '',
@@ -212,12 +211,8 @@ export default function UpdateVersions() {
             
             const savedCurriculum = (await service.update(data)).data;
 
-            //TODO rever lógica
-            // atualizar currículo usado na exibição
-            // voltar valores default da página de update
-            
-            showSuccessMessage('Alterações salvas com sucesso! Atualizando página!');
             window.location.reload();
+            showSuccessMessage('Alterações salvas com sucesso!');
         } catch (error) {
             console.log(error);
             showErrorMessage('Ocorreu um erro ao tentar atualizar o currículo.')
