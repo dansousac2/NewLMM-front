@@ -44,7 +44,7 @@ export const createApiService = (endpoint) => {
                 httpClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }
         },
-        postWithHeaders: (params) => httpClient.post(endpoint, params, {
+        postWithHeaders: (url, params) => httpClient.post(url ? builderUrl(url) : endpoint, params, {
             headers: {
                 'Content-type': 'multipart/form-data'
             }

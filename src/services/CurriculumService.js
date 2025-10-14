@@ -2,7 +2,7 @@ import {createApiService} from "./ApiService";
 
 const api = createApiService('/curriculum');
 
-const VersionService = {
+const CurriculumService = {
 
     create: async (object) => {
         return api.post('', object);
@@ -30,7 +30,11 @@ const VersionService = {
 
     findAllByUserId: async (id) => {
         return api.getAllById("/findall", id);
+    },
+
+    createNewVersion: async (file) => {
+        return api.postWithHeaders('/uploadcurriculumxml', file);
     }
 };
 
-export default VersionService;
+export default CurriculumService;

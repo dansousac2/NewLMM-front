@@ -3,7 +3,7 @@ import EntriesMap from '../../components/Curriculum/EntriesMap';
 import FileUploadService from '../../services/FileUploadService';
 import FileUploadWithoutClassCreationService from '../../services/FileUploadWithoutClassCreationService';
 import ReceiptWithUrlService from '../../services/ReceiptWithUrlService';
-import VersionService from '../../services/VersionsService';
+import CurriculumService from '../../services/CurriculumService';
 import './UpdateVersions.css';
 
 import imgComeBack from '../../assets/images/ComeBack.svg';
@@ -23,7 +23,7 @@ import LeftMenu from '../../components/Menu/LeftMenu';
 import { showErrorMessage, showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
 
 // Serviços
-const service = VersionService;
+const service = CurriculumService;
 const onlyFileUpload = FileUploadWithoutClassCreationService();
 const fileUploadService = FileUploadService();
 const receiptWithUrlService = ReceiptWithUrlService();

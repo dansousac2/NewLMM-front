@@ -10,9 +10,9 @@ import { showErrorMessage } from "../../components/Toastr/Toastr";
 import AuthenticationApiService from "../../services/AuthenticationApiService";
 import PdfService from "../../services/PdfService";
 import StorageService from "../../services/StorageService";
-import VersionsService from "../../services/VersionsService";
+import CurriculumService from "../../services/CurriculumService";
 
-const curriculumService = VersionsService;
+const curriculumService = CurriculumService;
 const authService = AuthenticationApiService;
 const pdfService = PdfService;
 const storage = StorageService();

@@ -7,13 +7,13 @@ import "./Home.css";
 import FileUpload from "../../components/FormGroup/FileUpload";
 import { showErrorMessage } from "../../components/Toastr/Toastr";
 
-import HomeService from "../../services/HomeService";
+import CurriculumService from "../../services/CurriculumService";
 import AuthenticationApiService from "../../services/AuthenticationApiService";
 
 import LeftMenu from "../../components/Menu/LeftMenu";
 import PopupSpace from "../../components/FormGroup/PopupSpace";
 
-const homeService = HomeService;
+const curriculumService = CurriculumService;
 const authentication = AuthenticationApiService;
 
 export default function Home() {
@@ -32,7 +32,7 @@ export default function Home() {
       data.append("file", file);
       data.append("userId", authentication.getLoggedUser().id);
 
-      const response = await homeService.create(data);
+      const response = await curriculumService.createNewVersion(data);
       navigate(`/updateversions/${response.data}`);
     } catch (error) {
       console.error(error.response || error);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './VersionListing.css';
 
 import AuthenticationApiService from '../../services/AuthenticationApiService';
-import VersionsService from '../../services/VersionsService';
+import VersionsService from '../../services/CurriculumService';
 
 import { Button } from 'reactstrap';
 import CurriculumCard from '../../components/Curriculum/CurriculumCard';
