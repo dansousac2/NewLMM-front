@@ -17,9 +17,9 @@ const curriculumService = CurriculumService;
 const authentication = AuthenticationApiService;
 
 export default function Home() {
-  
+
   const navigate = useNavigate();
-  
+
   const [owner, setOwner] = useState("");
   const [renderCurriculumConfirmation, setRenderCurriculumConfirmation] = useState(false);
   const [file, setFile] = useState(null);
@@ -48,9 +48,9 @@ export default function Home() {
       const parser = new DOMParser();
       const docXml = parser.parseFromString(stringXml, "text/xml");
 
-      const ownerName = docXml
-        .querySelector("DADOS-GERAIS")
-        ?.attributes.getNamedItem("NOME-COMPLETO")?.value;
+      const ownerName = docXml.querySelector("DADOS-GERAIS")
+        ?.attributes.getNamedItem("NOME-COMPLETO")
+        ?.value;
 
       if (!ownerName) {
         showErrorMessage("Currículo inválido! Reveja o arquivo enviado!");

@@ -33,7 +33,7 @@ const updateFilesType = '.jpeg, .jpg, .png, .pdf';
 export default function UpdateVersions() {
 
     const navigate = useNavigate();
-    let { id: idParam } = useParams();
+    const { id: idParam } = useParams();
 
     // Estados
     // O setState do react é assíncrono, mas só mostra o valor atualizado após nova renderização
@@ -209,7 +209,7 @@ export default function UpdateVersions() {
                 new Blob([JSON.stringify(curriculumToSend)], {type: 'application/json'})
             );
             
-            const savedCurriculum = (await service.update(data)).data;
+            await service.update(data);
 
             window.location.reload();
             showSuccessMessage('Alterações salvas com sucesso!');

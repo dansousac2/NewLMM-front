@@ -47,7 +47,7 @@ const AuthenticationApiService = {
         if (!user || !token) return false;
 
         try {
-            const response = await api.post('/login/verifytoken', token);
+            const response = await api.post('/login/verifytoken', { token });
             return response.data;
         } catch(error) {
             console.error('Erro ao verificar Token.', error)

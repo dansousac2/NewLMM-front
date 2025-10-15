@@ -50,7 +50,6 @@ export const createApiService = (endpoint) => {
             }
         }),
         putWithFiles: (url, params) => httpClient.put(builderUrl(url), params, { headers: headerContentTipeMP }),
-        // getFile: (url, params) => httpClient.get(builderUrl(url), params, { responseTypeBLOB })
-        getFile: (url) => httpClient.get(builderUrl(url), {...responseTypeBLOB} )
+        getFile: (url) => httpClient.get(builderUrl(url), { ...responseTypeBLOB })
     };
 };
