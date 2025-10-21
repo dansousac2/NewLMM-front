@@ -29,6 +29,7 @@ const fileUploadService = FileUploadService();
 const receiptWithUrlService = ReceiptWithUrlService();
 
 const updateFilesType = '.jpeg, .jpg, .png, .pdf';
+const maxReceipts = 3;
 
 export default function UpdateVersions() {
 
@@ -66,7 +67,6 @@ export default function UpdateVersions() {
 
     const [anyOriginalRemoved, setAnyOriginalRemoved] = useState(false);
     const [haveAllOriginalReceipts, setHaveAllOriginalReceipts] = useState(true);
-    const [updateCards, setUpdateCards] = useState(0);
 
     const [countId, setCountId] = useState(0);
 
@@ -76,6 +76,9 @@ export default function UpdateVersions() {
     const btnUpdate = useRef(null);
     // Ref para que botão chame componente de input de arquivo
     const fileInputRef = useRef(null);
+
+    // Ref para prevenção de carregamento de página
+    const preventLoad = useRef({ haveAllOriginalReceipts, anyOriginalRemoved });
 
     // Busca dados no mount e quando id muda
     useEffect(() => {
@@ -97,22 +100,30 @@ export default function UpdateVersions() {
     /*
     * Verificação de comprovantes não salvos - Parte 02
     */
-    useEffect(() => {
-        const handleBeforeUnload = (event) => {
-            if (!haveAllOriginalReceipts || anyOriginalRemoved) {
+    const loadListener = {
+        name: 'beforeunload',
+        handleBeforeUnload: (event) => {
+            const {haveAllOriginalReceipts: originals, anyOriginalRemoved: originalRemoved} = preventLoad;
+            if (!originals || originalRemoved) {
                 // se houver algum novo, ou se algum original do banco de dados foi removido
                 event.preventDefault();
                 event.returnValue = "";
                 return "";
             }
-        };
+        }
+    }
+
+    useEffect(() => {
+
+        // atualiza variáveis a serem usadas no useRef
+        preventLoad.current = { haveAllOriginalReceipts, anyOriginalRemoved };
 
         // adiciona o evento de prevenção de navegação
-        window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener(loadListener.name, loadListener.handleBeforeUnload);
 
         // Função de Limpeza do useEfect
         // remoção para prevenir vazamentos de memória
-        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+        return () => window.removeEventListener(loadListener.name, loadListener.handleBeforeUnload);
 
     }, [haveAllOriginalReceipts, anyOriginalRemoved]);
 
@@ -126,10 +137,10 @@ export default function UpdateVersions() {
             const numbReceipts = receiptList.length;
 
             if (btnFisicalReceipt.current && btnLinkReceipt.current) {
-                if(numbReceipts < 5) {
+                if (numbReceipts <= maxReceipts) {
                     btnFisicalReceipt.current.disabled = false;
                     btnLinkReceipt.current.disabled = false;
-                    if(numbReceipts === 0) {
+                    if (numbReceipts === 0) {
                         showWarningMessage("A entrada ainda não possui comprovantes! Os envie clicando em uma das opções abaixo!");
                     }
                 } else {
@@ -183,12 +194,12 @@ export default function UpdateVersions() {
                 let count = 1;
                 let newId;
                 entry.receipts.forEach(rec => {
-                    if(String(rec.id).includes('new')) {
+                    if (String(rec.id).includes('new')) {
                         // se novo prepara novo id tipo int
                         newId = entry.id + count++;
                         // busca nos arquivos a serem enviados por correspondência
                         newReceiptsFiles.forEach(file => {
-                            if(file.id === rec.id) {
+                            if (file.id === rec.id) {
                                 // file recebe novo ID
                                 file.id = -(newId);
                             }
@@ -206,16 +217,19 @@ export default function UpdateVersions() {
             });
             data.append(
                 'dto',
-                new Blob([JSON.stringify(curriculumToSend)], {type: 'application/json'})
+                new Blob([JSON.stringify(curriculumToSend)], { type: 'application/json' })
             );
-            
+
             await service.update(data);
 
+            // remove restrição de load de página
+            window.removeEventListener(loadListener.name, loadListener.handleBeforeUnload);
+            alert('A página será recarregada!');
             window.location.reload();
-            showSuccessMessage('Alterações salvas com sucesso!');
+
         } catch (error) {
             console.log(error);
-            showErrorMessage('Ocorreu um erro ao tentar atualizar o currículo.')
+            showErrorMessage('Ocorreu um erro ao tentar atualizar o currículo.');
         }
     };
 
@@ -268,7 +282,7 @@ export default function UpdateVersions() {
             newReceipt.extension = nameFile.substring(indexDot);
 
             // para vincular no back com entidade receipt
-            const fileWithId = {id: newReceipt.id, file: currentReceiptFile}
+            const fileWithId = { id: newReceipt.id, file: currentReceiptFile }
             setNewReceiptsFiles(prev => [...prev, fileWithId]);
         } else {
             newReceipt.url = currentLink
@@ -494,7 +508,6 @@ export default function UpdateVersions() {
 
                     <div className='Entry-Receipts'>
                         <CardReceipt
-                            update={updateCards}
                             receipts={receiptList}
                             deleteMethod={deleteReceipOfList}
                         />
@@ -509,7 +522,7 @@ export default function UpdateVersions() {
                         <input type='text' disabled={true} className='Input-arquive' placeholder={currentReceiptFile ? currentReceiptFile.name : '***'} />
                         <input
                             type='file'
-                            accept= {updateFilesType}
+                            accept={updateFilesType}
                             className='Input-hiden'
                             ref={fileInputRef}
                             onChange={e => setCurrentFile(e.target.files[0])}

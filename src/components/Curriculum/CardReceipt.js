@@ -26,6 +26,7 @@ export default function CardReceipt(props) {
                 let icon;
                 let linkLabel;
                 let isFisicalFile = false;
+                const comentary = rec.commentary;
 
                 let link;
 
@@ -55,7 +56,7 @@ export default function CardReceipt(props) {
                 return (
                     <div key={`recUni${rec.id}`} className="Receipt-unique">
                         <img className="Icons Icon-Entry" border="0" src={icon} />
-                        <b id={`commRec${rec.id}`}> {rec.commentary == null ? "---" : rec.commentary} </b>
+                        <b id={`commRec${rec.id}`}> {comentary == null || comentary === '' ? "---" : comentary} </b>
                         <a href={link} target="_blank"> { linkLabel } </a>
                         <Button id={`btRec${rec.id}`} onClick={() => { props.deleteMethod(rec.id, isFisicalFile) }} color="danger" size="sm" >
                             <img className="Icons Icon-Entry" src={iconRecyclebin} />
@@ -69,7 +70,7 @@ export default function CardReceipt(props) {
         }
         createCard();
         // atualiza sempre que alterações forem feitas na lista de receipts passadas como propriedade
-    }, [props.receipts, props.update]);
+    }, [props.receipts]);
 
 
     return (
