@@ -9,6 +9,7 @@ import { Button } from 'reactstrap';
 import CurriculumCard from '../../components/Curriculum/CurriculumCard';
 import PopupSpace from '../../components/FormGroup/PopupSpace';
 import LeftMenu from '../../components/Menu/LeftMenu';
+import { showSuccessMessage } from '../../components/Toastr/Toastr';
 
 const service = VersionsService;
 const authService = AuthenticationApiService;
@@ -49,6 +50,7 @@ export default function VersionListing() {
       await service.delete(id);
       await find();
       setRenderConfirmExclusion(false);
+      showSuccessMessage('Versão Excluída!');
     } catch (error) {
       console.error(error);
     }

@@ -103,7 +103,7 @@ export default function UpdateVersions() {
     const loadListener = {
         name: 'beforeunload',
         handleBeforeUnload: (event) => {
-            const {haveAllOriginalReceipts: originals, anyOriginalRemoved: originalRemoved} = preventLoad;
+            const { haveAllOriginalReceipts: originals, anyOriginalRemoved: originalRemoved } = preventLoad;
             if (!originals || originalRemoved) {
                 // se houver algum novo, ou se algum original do banco de dados foi removido
                 event.preventDefault();
@@ -117,6 +117,10 @@ export default function UpdateVersions() {
 
         // atualiza variáveis a serem usadas no useRef
         preventLoad.current = { haveAllOriginalReceipts, anyOriginalRemoved };
+
+        //TODO remover após investigar problema de reload de página
+        console.log('haveAll: ', preventLoad.current.haveAllOriginalReceipts);
+        console.log('anyOriginal: ', preventLoad.current.anyOriginalRemoved);
 
         // adiciona o evento de prevenção de navegação
         window.addEventListener(loadListener.name, loadListener.handleBeforeUnload);
@@ -184,7 +188,7 @@ export default function UpdateVersions() {
     };
 
     // Atualiza o currículo com dados e comprovantes novos
-    const updateCurriculum = async () => {
+    const updateCurriculum = async (isNewVersion = false) => {
         try {
 
             // DTO
@@ -211,21 +215,32 @@ export default function UpdateVersions() {
             });
 
             const data = new FormData();
+            // se nova versão
+            if (isNewVersion) {
+                data.append('newversion', true);
+                curriculumToSend.description = commentaryToNewVersion;
+            }
+            // files[] ids[]
             newReceiptsFiles.forEach(rec => {
                 data.append('files', rec.file);
                 data.append('fileIds', rec.id);
             });
+            // curriculumDto
             data.append(
                 'dto',
                 new Blob([JSON.stringify(curriculumToSend)], { type: 'application/json' })
             );
 
-            await service.update(data);
+            const responseData = (await service.update(data)).data;
 
             // remove restrição de load de página
             window.removeEventListener(loadListener.name, loadListener.handleBeforeUnload);
             alert('A página será recarregada!');
-            window.location.reload();
+            if (isNewVersion) {
+                navigate(`/updateversions/${responseData.id}`);
+            } else {
+                window.location.reload();
+            }
 
         } catch (error) {
             console.log(error);
@@ -236,19 +251,12 @@ export default function UpdateVersions() {
     // Salva nova versão do currículo
     const saveNewVersion = async () => {
 
-        // remove id e atualiza data de modificação para salvar no banco.
-        setCurriculum(prev => ({ ...prev, id: null, lastModification: new Date() }));
-        try {
-            const response = await service.create(curriculum);
-            if (newReceiptsFiles.length > 0) {
-                await onlySendNewFiles(response.data.entryList);
-            }
-            showSuccessMessage("Nova versão salva com sucesso! Atualizando página para edição da nova versão!");
-            idParam = response.data.id;
-        } catch (error) {
-            console.log(error);
-            showErrorMessage('Erro ao salvar nova versão.')
-        }
+        await updateCurriculum(true);
+
+        // fecha popup e reinicia variáveis
+        cancelSaveNewVersion();
+
+        showSuccessMessage('Carregada nova versão criada!');
     };
 
     // Cancela salvar nova versão
@@ -385,32 +393,6 @@ export default function UpdateVersions() {
             setHaveAllOriginalReceipts(false);
         }
 
-    };
-
-    // Envia apenas os arquivos novos após criar nova versão
-    const onlySendNewFiles = async (entryListSaved) => {
-        for (const file of newReceiptsFiles) {
-
-            let wasFinded = false;
-
-            //TODO rever lógica de laço
-            for (const entry of entryListSaved) {
-                for (const rec of entry.receipts) {
-                    if (rec.lastModified === file.lastModified && `${rec.name}${rec.extension}` === file.name) {
-                        const data = new FormData();
-                        data.append('file', file);
-                        data.append('userId', curriculum.ownerId);
-                        data.append('nameOnDB', rec.id + rec.extension);
-
-                        // await onlyFileUpload.create(data);
-
-                        wasFinded = true;
-                        break;
-                    }
-                }
-                if (wasFinded) break;
-            }
-        }
     };
 
     // Atualiza arquivo atual para upload
