@@ -103,7 +103,7 @@ export default function UpdateVersions() {
     const loadListener = {
         name: 'beforeunload',
         handleBeforeUnload: (event) => {
-            const { haveAllOriginalReceipts: originals, anyOriginalRemoved: originalRemoved } = preventLoad;
+            const { haveAllOriginalReceipts: originals, anyOriginalRemoved: originalRemoved } = preventLoad.current;
             if (!originals || originalRemoved) {
                 // se houver algum novo, ou se algum original do banco de dados foi removido
                 event.preventDefault();
@@ -117,10 +117,6 @@ export default function UpdateVersions() {
 
         // atualiza variáveis a serem usadas no useRef
         preventLoad.current = { haveAllOriginalReceipts, anyOriginalRemoved };
-
-        //TODO remover após investigar problema de reload de página
-        console.log('haveAll: ', preventLoad.current.haveAllOriginalReceipts);
-        console.log('anyOriginal: ', preventLoad.current.anyOriginalRemoved);
 
         // adiciona o evento de prevenção de navegação
         window.addEventListener(loadListener.name, loadListener.handleBeforeUnload);
