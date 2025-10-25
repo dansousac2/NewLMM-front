@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import EntriesMap from '../../components/Curriculum/EntriesMap';
-import FileUploadService from '../../services/FileUploadService';
-import FileUploadWithoutClassCreationService from '../../services/FileUploadWithoutClassCreationService';
-import ReceiptWithUrlService from '../../services/ReceiptWithUrlService';
 import CurriculumService from '../../services/CurriculumService';
 import './UpdateVersions.css';
 
@@ -24,9 +21,6 @@ import { showErrorMessage, showSuccessMessage, showWarningMessage } from "../../
 
 // Serviços
 const service = CurriculumService;
-const onlyFileUpload = FileUploadWithoutClassCreationService();
-const fileUploadService = FileUploadService();
-const receiptWithUrlService = ReceiptWithUrlService();
 
 const updateFilesType = '.jpeg, .jpg, .png, .pdf';
 const maxReceipts = 3;
