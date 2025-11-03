@@ -24,6 +24,7 @@ const service = CurriculumService;
 
 const updateFilesType = '.jpeg, .jpg, .png, .pdf';
 const maxReceipts = 3;
+const maxSizeMB = 3 * 1024 * 1024;
 
 export default function UpdateVersions() {
 
@@ -388,7 +389,11 @@ export default function UpdateVersions() {
     // Atualiza arquivo atual para upload
     const setCurrentFile = (file) => {
         if (file != null) {
-            setCurrentReceiptFile(file);
+            if(file.size > maxSizeMB) {
+                showErrorMessage('Tamanho máximo de 3MB excedido.');
+            } else {
+                setCurrentReceiptFile(file);
+            }
         }
     };
 
