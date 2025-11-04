@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import "./ExportPdf.css";
 
 import { Button } from "reactstrap";
-import LoadingComp from "../../components/Extra/LoadingComp";
 import LeftMenu from "../../components/Menu/LeftMenu";
 import CurriculumTableRS from "../../components/SchedulingTable/CurriculumTableRS";
 import { showErrorMessage } from "../../components/Toastr/Toastr";
+import LoadingComp from "../../components/Extra/LoadingComp";
+import { spinnerOnRequest } from "../../components/Extra/Utils";
 
 import AuthenticationApiService from "../../services/AuthenticationApiService";
 import PdfService from "../../services/PdfService";
@@ -18,10 +19,11 @@ const pdfService = PdfService;
 const storage = StorageService();
 
 export default function ExportPdf() {
+
     const [curriculumList, setCurriculumList] = useState([]);
     const [selectedCurriculum, setSelectedCurriculum] = useState(null);
-    const [renderLoading, setRenderLoading] = useState(false);
     const [linkPdf, setLinkPdf] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const linkDownloadRef = useRef(null);
 
@@ -30,16 +32,15 @@ export default function ExportPdf() {
         find();
     }, []);
 
-    const find = () => {
-        curriculumService
-            .findAllByUserId(authService.getLoggedUser().id)
-            .then((response) => {
-                setCurriculumList(response.data);
-            })
-            .catch((error) => {
-                showErrorMessage(error.data);
-                console.error(error);
-            });
+    const find = async () => {
+
+        try {
+            const response = await spinnerOnRequest(() => curriculumService.findAllByUserId(authService.getLoggedUser().id), setLoading);
+            setCurriculumList(response.data);
+        } catch(error) {
+            showErrorMessage('Erro ao carregar versões existentes de currículo.');
+            console.error(error);
+        }
     };
 
     const handleCurriculumSelected = (curriculum) => {
@@ -55,18 +56,16 @@ export default function ExportPdf() {
     const generatePdf = async () => {
         if (!selectedCurriculum) return;
 
-        setRenderLoading(true);
-
         if (linkPdf === "") {
-            console.log("foi no banco");
             try {
-                const response = await pdfService.generate(
-                    selectedCurriculum.id,
-                    authService.getLoggedUser().id
-                );
+                const response = await spinnerOnRequest(() => pdfService.generate(selectedCurriculum.id, authService.getLoggedUser().id), setLoading);
+
                 const newLink = response.data + noCache();
+
                 setLinkPdf(newLink);
+
                 storage.setItem(getSelectedCurriculumKeyMap(selectedCurriculum), newLink);
+
             } catch (error) {
                 showErrorMessage(error.data);
                 console.log(error);
@@ -74,8 +73,6 @@ export default function ExportPdf() {
         } else {
             setLinkPdf(storage.getItem(getSelectedCurriculumKeyMap()));
         }
-
-        setRenderLoading(false);
 
         if (linkDownloadRef.current) {
             linkDownloadRef.current.click();
@@ -101,6 +98,9 @@ export default function ExportPdf() {
 
     return (
         <div className="Principal Fields">
+
+            <LoadingComp render={loading} />
+
             <LeftMenu />
             <div className="Border-1">
                 <h1>Selecione uma versão para ser exportada</h1>
@@ -130,7 +130,6 @@ export default function ExportPdf() {
                     </div>
                 </div>
             </div>
-            <LoadingComp render={renderLoading} />
         </div>
     );
 }
