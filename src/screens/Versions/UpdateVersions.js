@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import EntriesMap from '../../components/Curriculum/EntriesMap';
 import CurriculumService from '../../services/CurriculumService';
 import './UpdateVersions.css';
+import LoadingComp from '../../components/Extra/LoadingComp';
+import { spinnerOnRequest } from '../../components/Extra/Utils';
 
 import imgComeBack from '../../assets/images/ComeBack.svg';
 import imgReceiptSent from '../../assets/images/Proven.svg';
@@ -65,6 +67,8 @@ export default function UpdateVersions() {
 
     const [countId, setCountId] = useState(0);
 
+    const [loading, setLoading] = useState(false);
+
     // Refs para botões
     const btnFisicalReceipt = useRef(null);
     const btnLinkReceipt = useRef(null);
@@ -79,7 +83,7 @@ export default function UpdateVersions() {
     useEffect(() => {
         async function findById() {
             try {
-                const response = await service.findById(idParam);
+                const response = await spinnerOnRequest(() => service.findById(idParam), setLoading);
                 setCurriculum(response.data);
             } catch (error) {
                 console.error(error);
@@ -222,7 +226,7 @@ export default function UpdateVersions() {
                 new Blob([JSON.stringify(curriculumToSend)], { type: 'application/json' })
             );
 
-            const responseData = (await service.update(data)).data;
+            const responseData = (await spinnerOnRequest(() => service.update(data), setLoading)).data;
 
             // remove restrição de load de página
             window.removeEventListener(loadListener.name, loadListener.handleBeforeUnload);
@@ -400,6 +404,8 @@ export default function UpdateVersions() {
     return (
         <div className='F-update'>
 
+            <LoadingComp render={loading}/>
+
             <div className='Div-Menu'>
                 <LeftMenu />
             </div>
@@ -436,7 +442,7 @@ export default function UpdateVersions() {
                             color="primary"
                             size="lg"
                             className="Bt-space-between"
-                            onClick={updateCurriculum}
+                            onClick={() => updateCurriculum()}
                             innerRef={el => (btnUpdate.current = el)}
                             title='atualizar versão'
                             disabled={haveAllOriginalReceipts}
@@ -613,6 +619,7 @@ export default function UpdateVersions() {
                         <h6>Aguardando para salvar</h6>
                     </div>
                 </div>
+
             </div>
         </div>
     );
