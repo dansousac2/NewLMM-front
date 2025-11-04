@@ -6,6 +6,8 @@ import "./Home.css";
 
 import FileUpload from "../../components/FormGroup/FileUpload";
 import { showErrorMessage } from "../../components/Toastr/Toastr";
+import LoadingComp from "../../components/Extra/LoadingComp";
+import { spinnerOnRequest } from "../../components/Extra/Utils";
 
 import CurriculumService from "../../services/CurriculumService";
 import AuthenticationApiService from "../../services/AuthenticationApiService";
@@ -23,6 +25,7 @@ export default function Home() {
   const [owner, setOwner] = useState("");
   const [renderCurriculumConfirmation, setRenderCurriculumConfirmation] = useState(false);
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const sendFile = async () => {
     setRenderCurriculumConfirmation(false);
@@ -32,11 +35,11 @@ export default function Home() {
       data.append("file", file);
       data.append("userId", authentication.getLoggedUser().id);
 
-      const response = await curriculumService.createNewVersion(data);
+      const response = await spinnerOnRequest(() => curriculumService.createNewVersion(data), setLoading);
       navigate(`/updateversions/${response.data}`);
     } catch (error) {
-      console.error(error.response || error);
       showErrorMessage("Erro ao enviar o arquivo!");
+      console.error(error.response || error);
     }
   };
 
@@ -71,6 +74,9 @@ export default function Home() {
 
   return (
     <div className="Principal Fields">
+
+      <LoadingComp render={loading}/>
+
       <LeftMenu />
 
       <div className="Text-Home">
