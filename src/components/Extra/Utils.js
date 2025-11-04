@@ -7,8 +7,6 @@ const spinnerOnRequest = async (asyncAction, setLoadingState) => {
         setLoadingState(true);
         const response = await asyncAction();
         return response;
-    } catch (error) {
-        console.log('Erro na requisição feita: ', error);
     } finally {
         setLoadingState(false);
     }

@@ -4,6 +4,8 @@ import './VersionListing.css';
 
 import AuthenticationApiService from '../../services/AuthenticationApiService';
 import VersionsService from '../../services/CurriculumService';
+import LoadingComp from '../../components/Extra/LoadingComp';
+import { spinnerOnRequest } from '../../components/Extra/Utils';
 
 import { Button } from 'reactstrap';
 import CurriculumCard from '../../components/Curriculum/CurriculumCard';
@@ -21,6 +23,7 @@ export default function VersionListing() {
   const [curriculumList, setCurriculumList] = useState([]);
   const [renderConfirmExclusion, setRenderConfirmExclusion] = useState(false);
   const [curriculumIdToExclude, setCurriculumIdToExclude] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     find();
@@ -28,7 +31,8 @@ export default function VersionListing() {
 
   async function find() {
     try {
-      const response = await service.findAllByUserId(authService.getLoggedUser().id);
+      // const response = await service.findAllByUserId(authService.getLoggedUser().id);
+      const response = await spinnerOnRequest(() => service.findAllByUserId(authService.getLoggedUser().id), setLoading);
       setCurriculumList(response.data);
     } catch (error) {
       console.error(error);
@@ -47,7 +51,7 @@ export default function VersionListing() {
 
   async function deleteCurriculum(id) {
     try {
-      await service.delete(id);
+      await spinnerOnRequest(() => service.delete(id), setLoading);
       await find();
       setRenderConfirmExclusion(false);
       showSuccessMessage('Versão Excluída!');
@@ -57,11 +61,13 @@ export default function VersionListing() {
   }
 
   function editCurriculum(id) {
-    navigate(`/updateversions/${id}`);
+    spinnerOnRequest(() => navigate(`/updateversions/${id}`), setLoading);
   }
 
   return (
     <div className="Versions-Screen">
+
+      <LoadingComp render={loading}/>
 
       <div className='Menu'>
         <LeftMenu />
