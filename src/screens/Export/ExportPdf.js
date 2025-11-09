@@ -12,6 +12,7 @@ import AuthenticationApiService from "../../services/AuthenticationApiService";
 import PdfService from "../../services/PdfService";
 import StorageService from "../../services/StorageService";
 import CurriculumService from "../../services/CurriculumService";
+import { error } from "toastr";
 
 const curriculumService = CurriculumService;
 const authService = AuthenticationApiService;
@@ -37,57 +38,46 @@ export default function ExportPdf() {
         try {
             const response = await spinnerOnRequest(() => curriculumService.findAllByUserId(authService.getLoggedUser().id), setLoading);
             setCurriculumList(response.data);
-        } catch(error) {
+        } catch (error) {
             showErrorMessage('Erro ao carregar versões existentes de currículo.');
             console.error(error);
         }
     };
 
+    // quando clicado o radiobutton, analisa se já tem blob de currículo salvo e o seta no campo LinkPdf
     const handleCurriculumSelected = (curriculum) => {
-        setSelectedCurriculum(curriculum);
 
-        if (isOnPathList(curriculum)) {
-            setLinkPdf(isOnPathList(curriculum));
+        setSelectedCurriculum(curriculum);
+        const curriculumInStorage = storage.getItem(getSelectedCurriculumKeyMap(curriculum));
+
+        if (curriculumInStorage) {
+            setLinkPdf(curriculumInStorage);
         } else {
             setLinkPdf("");
         }
     };
 
     const generatePdf = async () => {
+
         if (!selectedCurriculum) return;
 
-        if (linkPdf === "") {
+        if (!linkPdf) {
             try {
                 const response = await spinnerOnRequest(() => pdfService.generate(selectedCurriculum.id, authService.getLoggedUser().id), setLoading);
+                const objUrl = URL.createObjectURL(response.data);
+                setLinkPdf(objUrl);
 
-                const newLink = response.data + noCache();
+                storage.setItem(getSelectedCurriculumKeyMap(selectedCurriculum), objUrl);
 
-                setLinkPdf(newLink);
-
-                storage.setItem(getSelectedCurriculumKeyMap(selectedCurriculum), newLink);
-
+                // clque para baixar arquivo pdf
+                if (linkDownloadRef.current) {
+                    linkDownloadRef.current.click();
+                }
             } catch (error) {
-                showErrorMessage(error.data);
-                console.log(error);
+                showErrorMessage('Erro na requisição de gerar PDF.');
+                console.log(error.response.data.text());
             }
-        } else {
-            setLinkPdf(storage.getItem(getSelectedCurriculumKeyMap()));
         }
-
-        if (linkDownloadRef.current) {
-            linkDownloadRef.current.click();
-        }
-    };
-
-    const isOnPathList = (curriculum) => {
-        return storage.getItem(getSelectedCurriculumKeyMap(curriculum));
-    };
-
-    const noCache = () => {
-        const qsg = Date.now().toString();
-        // setQueryStringGhost(qsg);
-        console.log(qsg);
-        return "?" + qsg;
     };
 
     const getSelectedCurriculumKeyMap = (curriculum = selectedCurriculum) => {
