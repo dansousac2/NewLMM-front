@@ -1,17 +1,15 @@
 import React from "react";
 import './PopupSpace.css';
 
-export default class PopupSpace extends React.Component {
+export default function PopupSpace(props) {
 
-    render() {
-        if (this.props.render) {
+        if (props.render) {
             return (
                 <div className="Popup-2">
-                    <div className={`Popup-content-2 ${this.props.className}`}>
-                        {this.props.children}
+                    <div className={`Popup-content-2 ${props.className}`}>
+                        {props.children}
                     </div>
                 </div>
             )
         }
-    }
-}
+};

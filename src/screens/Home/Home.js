@@ -26,14 +26,17 @@ export default function Home() {
   const [renderCurriculumConfirmation, setRenderCurriculumConfirmation] = useState(false);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [renderComent, setRenderComent] = useState(false);
+  const [coment, setComent] = useState(null);
 
   const sendFile = async () => {
-    setRenderCurriculumConfirmation(false);
 
+    setRenderComent(false);
     try {
       const data = new FormData();
       data.append("file", file);
       data.append("userId", authentication.getLoggedUser().id);
+      data.append('coment', coment);
 
       const response = await spinnerOnRequest(() => curriculumService.createNewVersion(data), setLoading);
       navigate(`/updateversions/${response.data}`);
@@ -67,15 +70,21 @@ export default function Home() {
   };
 
   const cancelImportCurriculum = () => {
-    setOwner("");
     setRenderCurriculumConfirmation(false);
+    setRenderComent(false);
+    setOwner("");
     setFile(null);
+  };
+
+  const renderPopupComent = () => {
+    setRenderCurriculumConfirmation(false);
+    setRenderComent(true);
   };
 
   return (
     <div className="Principal Fields">
 
-      <LoadingComp render={loading}/>
+      <LoadingComp render={loading} />
 
       <LeftMenu />
 
@@ -97,11 +106,28 @@ export default function Home() {
         <br />
         <h2 className="Center">Confirma?</h2>
         <div className="Buttons-home-confimation">
-          <Button color="primary" size="lg" onClick={sendFile}>
+          <Button color="primary" size="lg" onClick={renderPopupComent}>
             SIM, SOU EU!
           </Button>
           <Button color="danger" size="lg" onClick={cancelImportCurriculum}>
             NÃO, CANCELAR!
+          </Button>
+        </div>
+      </PopupSpace>
+
+      <PopupSpace render={renderComent} className="Popup-home">
+        <h2 className="Center">Adiconar comentário?</h2>
+        <br />
+        <input placeholder="opcional" autoFocus onChange={e => setComent(e.target.value)}/>
+        <br />
+        <br />
+        <br />
+        <div className="Buttons-home-confimation">
+          <Button color="primary" size="lg" onClick={sendFile}>
+            ENVIAR
+          </Button>
+          <Button color="danger" size="lg" onClick={cancelImportCurriculum}>
+            CANCELAR
           </Button>
         </div>
       </PopupSpace>
