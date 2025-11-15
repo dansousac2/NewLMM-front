@@ -18,6 +18,8 @@ import PopupSpace from "../../components/FormGroup/PopupSpace";
 const curriculumService = CurriculumService;
 const authentication = AuthenticationApiService;
 
+const maxQuantityCharComment = 30;
+
 export default function Home() {
 
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ export default function Home() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [renderComent, setRenderComent] = useState(false);
-  const [coment, setComent] = useState(null);
+  const [comment, setComment] = useState(null);
 
   const sendFile = async () => {
 
@@ -36,7 +38,7 @@ export default function Home() {
       const data = new FormData();
       data.append("file", file);
       data.append("userId", authentication.getLoggedUser().id);
-      data.append('coment', coment);
+      data.append('coment', comment);
 
       const response = await spinnerOnRequest(() => curriculumService.createNewVersion(data), setLoading);
       navigate(`/updateversions/${response.data}`);
@@ -118,7 +120,7 @@ export default function Home() {
       <PopupSpace render={renderComent} className="Popup-home">
         <h2 className="Center">Adiconar comentário?</h2>
         <br />
-        <input placeholder="opcional" autoFocus onChange={e => setComent(e.target.value)}/>
+        <input placeholder="opcional" autoFocus maxLength={maxQuantityCharComment} onChange={e => setComment(e.target.value)}/>
         <br />
         <br />
         <br />
