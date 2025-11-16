@@ -40,10 +40,13 @@ export default function CardReceipt(props) {
                     /* receipt usa comprovante físico */
 
                     isFisicalFile = true;
-                    linkLabel = rec.name + rec.extension;
+                    linkLabel = rec.name.slice(0,21) + rec.extension;
 
-                    if(!String(rec.id).includes("new")) {
-                        // se comprovante persistido
+                    if(String(rec.id).includes("new")) {
+                        // novo comprovante físico
+                        link = rec.fisicalFileUploaded;
+                    } else {
+                        // se comprovante já persistido
                         link = await createLinkToRead(rec.id);
                     }
                 } else {

@@ -1,9 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import EntriesMap from '../../components/Curriculum/EntriesMap';
-import CurriculumService from '../../services/CurriculumService';
 import './UpdateVersions.css';
+
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button } from 'reactstrap';
+import { showErrorMessage, showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
+
+import EntriesMap from '../../components/Curriculum/EntriesMap';
 import LoadingComp from '../../components/Extra/LoadingComp';
 import { spinnerOnRequest } from '../../components/Extra/Utils';
+import CardReceipt, { WAITING_SAVE } from '../../components/Curriculum/CardReceipt';
+import PopupSpace from '../../components/FormGroup/PopupSpace';
+import LeftMenu from '../../components/Menu/LeftMenu';
 
 import imgComeBack from '../../assets/images/ComeBack.svg';
 import imgReceiptSent from '../../assets/images/Proven.svg';
@@ -13,13 +20,7 @@ import imgWithoutRceipt from '../../assets/images/WithoutProof.svg';
 import imgNewVersion from '../../assets/images/createNewCurriculum.svg';
 import imgIconUpReceipt from '../../assets/images/uploadReceipt.svg';
 
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from 'reactstrap';
-import CardReceipt, { WAITING_SAVE } from '../../components/Curriculum/CardReceipt';
-import PopupSpace from '../../components/FormGroup/PopupSpace';
-import LeftMenu from '../../components/Menu/LeftMenu';
-
-import { showErrorMessage, showSuccessMessage, showWarningMessage } from "../../components/Toastr/Toastr";
+import CurriculumService from '../../services/CurriculumService';
 
 // Serviços
 const service = CurriculumService;
@@ -272,7 +273,8 @@ export default function UpdateVersions() {
         let newReceipt = {
             id: generateId(),
             commentary: currentReceiptCommentary,
-            status: WAITING_SAVE
+            status: WAITING_SAVE,
+            fisicalFileUploaded: null
         }
 
         if (currentLink === "") {
@@ -287,6 +289,9 @@ export default function UpdateVersions() {
             // para vincular no back com entidade receipt
             const fileWithId = { id: newReceipt.id, file: currentReceiptFile }
             setNewReceiptsFiles(prev => [...prev, fileWithId]);
+
+            // Seta arquivo para ser usado no card
+            newReceipt.fisicalFileUploaded = URL.createObjectURL(currentReceiptFile);
         } else {
             newReceipt.url = currentLink
         }
@@ -344,15 +349,18 @@ export default function UpdateVersions() {
 
         setCurriculum(prev => ({
             ...prev,
-
             // lista de competências
             entryList: prev.entryList.map(entry => {
-                // se forem removidos comprovantes novos, verifica quantidade
+                // se forem removidos comprovantes novos
                 if (String(id).includes('new')) {
                     entry.receipts.forEach(rec => {
-                        if (String(rec.id).includes('new')) countNewReceipts++;
+                        // contar novos
+                        if (String(rec.id).includes('new')) {
+                            countNewReceipts++;
+                            // se for aquele estabelecido para exclusão, tenta revogar objeto URL
+                            if(rec.id === id) URL.revokeObjectURL(rec.fisicalFileUploaded);
+                        }
                     });
-
                 }
 
                 if (entry.id == currentEntry.id) {
@@ -378,9 +386,10 @@ export default function UpdateVersions() {
             // se o removido era o único novo e nenhum original foi removido, então restaram apenas os originais
             setHaveAllOriginalReceipts(countNewReceipts === 1 && !anyOriginalRemoved);
 
+            // se arquivo físico
             if (isFisicalFile) {
-                // se arquivo físico
-                setNewReceiptsFiles(prev => prev.filter(file => file.id !== id));
+                // remove da lista
+                setNewReceiptsFiles(prev => prev.filter(item => item.id !== id));
             }
         } else {
             // removido comprovante persistido no banco
@@ -526,6 +535,7 @@ export default function UpdateVersions() {
                             className='Input-commentary'
                             placeholder='(opcional)'
                             onChange={e => setCurrentReceiptCommentary(e.target.value.trim())}
+                            maxLength={30}
                         />
                     </div>
                     <div className='Buttons-confirm-cancel-receipt'>
