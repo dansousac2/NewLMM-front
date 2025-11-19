@@ -30,7 +30,7 @@ export default function CardReceipt(props) {
 
                 let link;
 
-                if(rec.status === WAITING_SAVE) {
+                if (rec.status === WAITING_SAVE) {
                     icon = iconWaiting;
                 } else {
                     icon = iconChecked;
@@ -40,9 +40,9 @@ export default function CardReceipt(props) {
                     /* receipt usa comprovante físico */
 
                     isFisicalFile = true;
-                    linkLabel = rec.name.slice(0,21) + rec.extension;
+                    linkLabel = rec.name.slice(0, 21) + rec.extension;
 
-                    if(String(rec.id).includes("new")) {
+                    if (String(rec.id).includes("new")) {
                         // novo comprovante físico
                         link = rec.fisicalFileUploaded;
                     } else {
@@ -52,15 +52,20 @@ export default function CardReceipt(props) {
                 } else {
                     /* receipt usa URL */
 
-                    linkLabel = 'Link para comprovação eletrônica';
-                    link = rec.url;
+                    linkLabel = 'Link';
+                    const url = rec.url;
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        link = "https://" + url;
+                    } else {
+                        link = url;
+                    }
                 }
 
                 return (
                     <div key={`recUni${rec.id}`} className="Receipt-unique">
                         <img className="Icons Icon-Entry" border="0" src={icon} />
                         <b id={`commRec${rec.id}`}> {comentary == null || comentary === '' ? "---" : comentary} </b>
-                        <a href={link} target="_blank"> { linkLabel } </a>
+                        <a href={link} target="_blank"> {linkLabel} </a>
                         <Button id={`btRec${rec.id}`} onClick={() => { props.deleteMethod(rec.id, isFisicalFile) }} color="danger" size="sm" >
                             <img className="Icons Icon-Entry" src={iconRecyclebin} />
                         </Button>

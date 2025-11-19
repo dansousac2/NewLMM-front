@@ -571,6 +571,7 @@ export default function UpdateVersions() {
                             className='Commentary'
                             placeholder='(opcional)'
                             onChange={e => setCurrentReceiptCommentary(e.target.value.trim())}
+                            maxLength={30}
                         />
                     </div>
 
