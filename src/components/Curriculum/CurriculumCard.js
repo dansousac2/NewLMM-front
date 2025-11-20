@@ -15,6 +15,21 @@ function CurriculumCard({curriculums, className, edit, delete: onDelete}) {
         )
     }
 
+    curriculums.sort((a, b) => {
+        const dataA = parseData(a.lastModification);
+        const dataB = parseData(b.lastModification);
+        return dataB - dataA;
+    });
+
+    // datas são strings no formato "dd/MM/yyyy - HH:mm:ss"
+    function parseData(strDataHora) {
+        const [data, hora] = strDataHora.split(' - ');
+        const [dia, mes, ano] = data.split('/').map(Number);
+        const [h, m, s] = hora.split(':').map(Number);
+
+        return new Date(ano, mes - 1, dia, h, m, s);
+    }
+
     const cardsCurriculum = curriculums.map(curriculum => {
 
         return (

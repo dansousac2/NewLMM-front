@@ -38,7 +38,7 @@ export default function Home() {
       const data = new FormData();
       data.append("file", file);
       data.append("userId", authentication.getLoggedUser().id);
-      data.append('coment', comment);
+      if(comment) data.append('coment', comment);
 
       const response = await spinnerOnRequest(() => curriculumService.createNewVersion(data), setLoading);
       navigate(`/updateversions/${response.data}`);
